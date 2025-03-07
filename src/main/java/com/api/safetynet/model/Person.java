@@ -19,7 +19,7 @@ public class Person {
 	private String email;
 		
 	
-	//Default constructor (Needed for Jackson)
+	//Default constructor
 	public Person() {} 
 		
 	

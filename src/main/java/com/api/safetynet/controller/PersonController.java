@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.api.safetynet.model.Person;
 import com.api.safetynet.service.PersonService;
 
+@RequestMapping("/api/person")
 @RestController
 public class PersonController {
 	
@@ -21,17 +23,17 @@ public class PersonController {
 	 * Get all persons
 	 * @return All persons from json's data
 	 */
-	@GetMapping("/person") 
+	@GetMapping() 
 	public Iterable<Person> getAllPerson(){
 		return personService.getAllPerson();
 	}
 	
 	/**
 	 * Get one person
-	 * @param /person/{firstName}/{lastName}
+	 * @param /api/person/{firstName}/{lastName}
 	 * @return One person from json's data
 	 */
-	@GetMapping("/person/{firstName}/{lastName}") 
+	@GetMapping("/{firstName}/{lastName}") 
 	public Person getOnePerson(@PathVariable("firstName") final String firstName,@PathVariable("lastName") final String lastName){
 		return personService.getOnePerson(firstName, lastName);
 	}
@@ -41,14 +43,20 @@ public class PersonController {
 	 * @param person An object person. ("firstName", "lastName", "address", "city", "zip", "phone", "email")
 	 * @return The "Person" object saved.
 	 */
-	@PostMapping("/person")
+	@PostMapping()
 	public Person addPerson(@RequestBody Person person) {
 		return personService.addPerson(person);
 	}
 	
-	@PutMapping("/person/{firstName}/{lastName}")
+	/**
+	 * Can update information for a person by searching his firstname and lastname.
+	 * Editable attributes : "address", "city", "zip", "phone" and "email".
+	 * @param /api/person/{firstName}/{lastName}
+	 * @return Update information.
+	 */
+	@PutMapping("/{firstName}/{lastName}")
 	public Person updatePerson(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName, @RequestBody Person person) {
-		Person personToEdit = personService.getOnePerson(firstName, lastName);//Take Person object that have to be edited.
+		Person personToEdit = personService.getOnePerson(firstName, lastName);//Take Person object that have to be updated.
 		
 		String address = person.getAddress();
 		if(address != null) {
@@ -60,8 +68,8 @@ public class PersonController {
 			personToEdit.setCity(city);
 		}
 		
-		Integer zip = person.getZip();
-		if(zip != null) {
+		int zip = person.getZip();
+		if(zip != 0) {
 			personToEdit.setZip(zip);
 		}
 		
@@ -81,9 +89,9 @@ public class PersonController {
 	
 	/**
 	 * Delete a person
-	 * @param /person/{firstName}/{lastName}
+	 * @param /api/person/{firstName}/{lastName}
 	 */
-	@DeleteMapping("/person/{firstName}/{lastName}")
+	@DeleteMapping("/{firstName}/{lastName}")
 	public void deletePerson(@PathVariable("firstName") final String firstName,@PathVariable("lastName") final String lastName) {
 		personService.deletePerson(firstName, lastName);
 	}

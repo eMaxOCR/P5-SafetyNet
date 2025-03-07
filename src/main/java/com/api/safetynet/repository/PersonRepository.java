@@ -12,8 +12,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Repository
 public class PersonRepository {
 	
+	//Attribute
 	private List<Person> persons; //Initiate list
 
+	//Functions
 	private List<Person> parseJsonPerson(){ //Parse JSON 
 		ObjectMapper objectMapper = new ObjectMapper();//Create Jackon's object mapper
 		
@@ -21,9 +23,7 @@ public class PersonRepository {
 		
 		try {
 			File jsonData = new File("src/main/resources/data.json"); //Indicate where is the data to parse
-			
 			JsonNode rootNode = objectMapper.readTree(jsonData); //Read all content of json data.
-			
 			JsonNode personsNode = rootNode.get("persons"); //Extract array "persons".
 			
 			personList = objectMapper.readValue(personsNode.toString(), new TypeReference<List<Person>>() {});
@@ -56,13 +56,12 @@ public class PersonRepository {
 	
 	public void deletePerson(final String firstName, final String lastName) {
 		persons.removeIf(person -> person.getFirstName().equals(firstName) & person.getLastName().equals(lastName));
-	}
-	
+	}	
 	
 	//Constructor
 	public PersonRepository() {
 		this.persons = parseJsonPerson();//Call method at app's lunch.
-		System.out.println("Création du répository : \" Person \" " + this.persons.size()); //Log that the repository as been created with how many persons.
+		System.out.println("\"Person\" repository created. (" + this.persons.size() + " found)"); //Log that the repository as been created with how many persons.
 		
 	}
 
