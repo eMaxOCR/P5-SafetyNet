@@ -1,7 +1,10 @@
 package com.api.safetynet.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,38 +22,44 @@ public class PhoneAlertController {
 
 	@Autowired
 	private FirestationService firestationService;
+	@Autowired
 	private PersonService personService;
 	
-	/*
-	 * http://localhost:8080/phoneAlert?firestation=<firestation_number>
-	 * 
-	 * Cette url doit retourner une liste des numéros de téléphone des résidents desservis 
-	 * par la caserne de pompiers. Nous l'utiliserons pour envoyer des messages texte 
-	 * d'urgence à des foyers spécifiques.
-	 * 
-	 * */
-	
-	@SuppressWarnings("null")
 	@GetMapping()
-	public List<Firestation> getPersonPhoneNumberByFirestation(@RequestParam("firestation") int stationNumber){
+	public Set<String> getPersonPhoneNumberByFirestation(@RequestParam("firestation") int stationNumber){
 		
-		//Attributs
-		//List<String> phoneNumberNearStation;
-		//Iterable<Person> personThatLivingNearStation;
+		//Attribute
 		Iterable<Firestation> allFirestations;
+		Iterable<Person> allPersons;
 		List<Firestation> firestationByNumber = new ArrayList<>();
+		List<Person> personByAddress = new ArrayList<Person>();
+		Set<String> personPhoneWithoutDouble = new HashSet<>(); //HashSet to void double reg
 		
-		//Take all the firestation by station number.
-		allFirestations = firestationService.getAllFirestation();
+	
+		allFirestations = firestationService.getAllFirestation();	//Take all the fire station.
+		allPersons = personService.getAllPerson();	//Take all the person
 		
-		//Only Take firestation by station's number.
+		//Only Take fire station by station's number. (We have addresses that we will compare to person's addresses)
 		for(Firestation firestationStationFinder : allFirestations) {
 			if(firestationStationFinder.getStation().equals(stationNumber)) {
 				firestationByNumber.add(firestationStationFinder);
 			}
 		}
 		
-		return firestationByNumber;
+		//By fire station's address, look all person's address and put it in personByAddress.
+		for (Firestation firestationFounded : firestationByNumber) {
+			for (Person personAddressFinder : allPersons){
+				if(personAddressFinder.getAddress().toString().equals(firestationFounded.getAddress().toString()))
+				personByAddress.add(personAddressFinder);
+			}
+		}
+		
+		//Convert list of person to list of String.
+		for (Person personPhoneNumberToTake : personByAddress) {
+			personPhoneWithoutDouble.add(personPhoneNumberToTake.getPhone());
+		}
+						
+		return personPhoneWithoutDouble;
 	}
 	
 }
