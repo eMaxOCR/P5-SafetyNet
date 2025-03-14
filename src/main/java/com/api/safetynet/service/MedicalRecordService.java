@@ -1,5 +1,7 @@
 package com.api.safetynet.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,4 +33,9 @@ public class MedicalRecordService {
 	public void deleteMedicalRecord(final String firstName, final String lastName) {
 		medicalRecordRepository.deleteMedicalRecord(firstName, lastName);
 	}
+	
+	public List<MedicalRecord> getChildMedicalRecord() {
+		return medicalRecordRepository.getChildMedicalRecord();
+	}
+	
 }

@@ -2,12 +2,11 @@ package com.api.safetynet.repository;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-
 import org.springframework.stereotype.Repository;
-
 import com.api.safetynet.model.MedicalRecord;
-import com.api.safetynet.model.Person;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,6 +56,23 @@ public class MedicalRecordRepository {
 		return null; //Return null if no medicalRecord detected.
 	}
 	
+	public List<MedicalRecord> getChildMedicalRecord() {
+		Calendar calendar = Calendar.getInstance(); //Create calendar
+		List<MedicalRecord> childMedicalRecord = new ArrayList<>();
+				
+		Date todayDate = calendar.getTime(); //Set today's time
+		calendar.add(Calendar.YEAR, -18); //Take off 18 years from calendar. 
+		Date todayMinus18years = calendar.getTime(); //Set time minus 18 years 
+		
+		for(MedicalRecord medicalRecord : medicalRecords) {
+			if(medicalRecord.getBirthdate().after(todayMinus18years) && medicalRecord.getBirthdate().before(todayDate)) {
+				childMedicalRecord.add(medicalRecord);
+			}
+		}
+		
+		return childMedicalRecord;
+	}
+		
 	public MedicalRecord addMedicalRecord(MedicalRecord medicalRecord) {
 		medicalRecords.add(medicalRecord);
 		return medicalRecord;

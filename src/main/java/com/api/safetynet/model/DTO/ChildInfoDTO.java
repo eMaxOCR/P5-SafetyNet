@@ -1,30 +1,25 @@
-package com.api.safetynet.model;
+package com.api.safetynet.model.DTO;
 
 import java.util.Date;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class MedicalRecord {
+public class ChildInfoDTO {
 	
 	//Attributes
 	private String firstName;
 	private String lastName;
+	@JsonIgnore 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
-	private Date birthdate; 
-	private List<Medication> medications;
-	private List<String> allergies;
-	
+	private Date birthdate;
+	private int age;
+	private List<FamilyMemberDTO> familyMember;
+		
 	//Default constructor
-	public MedicalRecord() {}
-	
+	public ChildInfoDTO() {}
 
-	//Getters & setters
+	//Getters & Setters
 	public String getFirstName() {
 		return firstName;
 	}
@@ -48,21 +43,21 @@ public class MedicalRecord {
 	public void setBirthdate(Date birthdate) {
 		this.birthdate = birthdate;
 	}
-
-	public List<Medication> getMedications() {
-		return medications;
+	
+	public int getAge() {
+		return age;
+	}
+	
+	public void setAge(int age) {
+		this.age = age;
+	}
+	
+	public List<FamilyMemberDTO> getFamilyMember() {
+		return familyMember;
 	}
 
-	public void setMedications(List<Medication> medications) {
-		this.medications = medications;
-	}
-
-	public List<String> getAllergies() {
-		return allergies;
-	}
-
-	public void setAllergies(List<String> allergies) {
-		this.allergies = allergies;
+	public void setFamilyMember(List<FamilyMemberDTO> familyMember) {
+		this.familyMember = familyMember;
 	}
 	
 }

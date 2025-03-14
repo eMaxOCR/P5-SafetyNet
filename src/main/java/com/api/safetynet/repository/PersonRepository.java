@@ -2,6 +2,8 @@ package com.api.safetynet.repository;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.api.safetynet.model.Person;
@@ -14,6 +16,13 @@ public class PersonRepository {
 	
 	//Attribute
 	private List<Person> persons; //Initiate list
+	
+	//Constructor
+		public PersonRepository() {
+			this.persons = parseJsonPerson();//Call method at app's lunch.
+			System.out.println("\"Person\" repository created. (" + this.persons.size() + " found)"); //Log that the repository as been created with how many persons.
+			
+		}
 
 	//Functions
 	private List<Person> parseJsonPerson(){ //Parse JSON 
@@ -49,7 +58,27 @@ public class PersonRepository {
 		return null; //Return null if no person detected.
 	}
 	
-	public Person addPerson(Person person) {
+	public List<Person> findAllPersonsByLastName(final String lastName){
+		List<Person> personsListByLastName = new ArrayList<Person>();//Create list of person and put information into Java object.
+		for (Person person : persons) {
+			if(person.getLastName().toString().equals(lastName)) {
+				personsListByLastName.add(person);
+			}
+		}
+		return personsListByLastName;
+	}
+	
+	public List<Person> getAllPersonsFromSameAddress(final String address){
+		List<Person> peronsFromSameAddress = new ArrayList<Person>();//Create list of person and put information into Java object.
+		for (Person person : persons) {
+			if(person.getAddress().toString().equals(address)) {
+				peronsFromSameAddress.add(person);
+			}
+		}
+		return peronsFromSameAddress;
+	}
+	
+	public Person addPerson(final Person person) {
 		persons.add(person);
 		return person;
 	}
@@ -58,11 +87,14 @@ public class PersonRepository {
 		persons.removeIf(person -> person.getFirstName().equals(firstName) & person.getLastName().equals(lastName));
 	}	
 	
-	//Constructor
-	public PersonRepository() {
-		this.persons = parseJsonPerson();//Call method at app's lunch.
-		System.out.println("\"Person\" repository created. (" + this.persons.size() + " found)"); //Log that the repository as been created with how many persons.
+	public int calculatePersonAge(final Date birthdate) {
+		Calendar birthDate = Calendar.getInstance();
+		birthDate.setTime(birthdate);
+		Calendar todayDate = Calendar.getInstance();
 		
+		int age = todayDate.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
+		
+		return age;
 	}
 
 
