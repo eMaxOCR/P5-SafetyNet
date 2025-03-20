@@ -26,7 +26,7 @@ public class FirestationController {
 	
 	@GetMapping("/{address}/{station}") 
 	public Firestation getOneFirestation(@PathVariable("address") final String address,@PathVariable("station") final Integer station){
-		return firestationService.getOneFirestation(address, station);
+		return firestationService.getOneFirestationByAddressAndStationNumber(address, station);
 	}
 	
 	@PostMapping()
@@ -36,7 +36,7 @@ public class FirestationController {
 	
 	@PutMapping("/{address}/{station}")
 	public Firestation updateFirestation(@PathVariable("address") final String address, @PathVariable("station") final int station, @RequestBody Firestation firestation) {
-		Firestation firestationToEdit = firestationService.getOneFirestation(address, station);
+		Firestation firestationToEdit = firestationService.getOneFirestationByAddressAndStationNumber(address, station);
 		
 		Integer stationVar = firestation.getStation();
 		if(stationVar != null) {

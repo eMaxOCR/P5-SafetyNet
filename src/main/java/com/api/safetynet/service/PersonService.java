@@ -12,7 +12,10 @@ import com.api.safetynet.model.MedicalRecord;
 import com.api.safetynet.model.Person;
 import com.api.safetynet.model.DTO.ChildInfoDTO;
 import com.api.safetynet.model.DTO.FamilyMemberDTO;
+import com.api.safetynet.model.DTO.HouseNearFireStationDTO;
 import com.api.safetynet.model.DTO.PersonInfoDTO;
+import com.api.safetynet.model.DTO.PersonInfoWithMedicalRecordsDTO;
+import com.api.safetynet.model.DTO.PersonNearFireStationDTO;
 import com.api.safetynet.repository.PersonRepository;
 import lombok.Data;
 
@@ -47,8 +50,10 @@ public class PersonService {
 	}
 	
 	public int calculatePersonAge(Date birthDate) {
+
 		return personRepository.calculatePersonAge(birthDate);
 	}
+	
 	public List<Person> getAllPersonsFromSameAddress(String address) {
 		return personRepository.getAllPersonsFromSameAddress(address);
 	}
@@ -92,7 +97,7 @@ public class PersonService {
 		return personEmail;
 	}
 	
-	public List<PersonInfoDTO> getPersonInformationByName(String lastNameToFind){
+	public List<PersonInfoDTO> getListOfPersonInformationByLastName(String lastNameToFind){
 		
 		//Attribute
 		List<Person>personsByLastName = personRepository.findAllPersonsByLastName(lastNameToFind);
@@ -164,39 +169,65 @@ public class PersonService {
 					
 		}
 		
-//		List<ChildInfoDTO> listChildsInformations = new ArrayList<>();
-//		List<ChildInfoDTO> listFamilyMember = new ArrayList<>();
-//		
-//		for(MedicalRecord medicalRecord : medicalRecordService.getChildMedicalRecord()) { //Take all child's medical records.
-//			Person person = getOnePerson(medicalRecord.getFirstName(),medicalRecord.getLastName()); //For each child's medical record, take first name and last name.
-//			if(person.getAddress().equals(addressToFind)) { //If child's address match to parameter's address, then add child.
-//				ChildInfoDTO childInfoDTO = new ChildInfoDTO();
-//				ChildInfoDTO adultInfoDTO = new ChildInfoDTO();
-//								
-//				//Mapping of DTO (May be used with MapStruct)
-//				childInfoDTO.setFirstName(person.getFirstName());
-//				childInfoDTO.setLastName(person.getLastName());
-//				childInfoDTO.setAge(calculatePersonAge(medicalRecord.getBirthdate()));
-//				
-//				for( Person familyMember : personRepository.getAllPersonsFromSameAddress(addressToFind)) { //Find all family members from address.
-//					
-//					//Mapping of DTO (May be used with MapStruct)
-//					adultInfoDTO.setFirstName(familyMember.getFirstName());
-//					adultInfoDTO.setLastName(familyMember.getLastName());
-//					//adultInfoDTO.setAge(calculatePersonAge(medicalRecord.getBirthdate()));
-//					
-//					listFamilyMember.add(adultInfoDTO);
-//					
-//				}
-//				childInfoDTO.setFamilyMember(listFamilyMember);
-//				
-//				listChildsInformations.add(childInfoDTO);
-//			}
-//		}
-		
 		return childsList;
 		
 	}
 	
+	public List<PersonNearFireStationDTO> getPersonsAndFireStationNumberByAddress (String address){
+		
+		List<PersonNearFireStationDTO> listOfPersonNearStation = new ArrayList<>();
+		
+		for(Person person : getAllPersonsFromSameAddress(address)) { //Listing all person from address.
+			
+			PersonNearFireStationDTO personNearFireStation = new PersonNearFireStationDTO();
+			
+			MedicalRecord personMedicalRecord = medicalRecordService.getOneMedicalRecord(person.getFirstName(),person.getLastName());
+			
+			//Mapping of DTO (May be used with MapStruct)
+			personNearFireStation.setLastName(personMedicalRecord.getLastName());
+			personNearFireStation.setAge(calculatePersonAge(personMedicalRecord.getBirthdate()));
+			personNearFireStation.setPhoneNumber(person.getPhone());
+			personNearFireStation.setMedications(personMedicalRecord.getMedications());
+			personNearFireStation.setAllergies(personMedicalRecord.getAllergies());
+			personNearFireStation.setFireStationNumber(firestationService.getFirestationNumberByAddress(address));;
+			
+			listOfPersonNearStation.add(personNearFireStation);
+
+		}
+		
+		return listOfPersonNearStation;
+		
+	}
+	
+	public List<HouseNearFireStationDTO> getAllHousesServedByFireStationNumber (List<Integer> listOfStationNumber){
+		
+		List<HouseNearFireStationDTO> listOfHouseServedbyStation = new ArrayList<HouseNearFireStationDTO>();
+		
+		for(Firestation firestation : firestationService.getAllFirestationByStationNumber(listOfStationNumber)){ //List of fire station.
+			HouseNearFireStationDTO houseServedByStation = new HouseNearFireStationDTO();
+			List<PersonInfoWithMedicalRecordsDTO> listOfPerson = new ArrayList<PersonInfoWithMedicalRecordsDTO>();
+			
+			for(PersonNearFireStationDTO personNearFirestation : getPersonsAndFireStationNumberByAddress(firestation.getAddress())){
+				PersonInfoWithMedicalRecordsDTO personWhoLives = new PersonInfoWithMedicalRecordsDTO();
+				
+				personWhoLives.setLastName(personNearFirestation.getLastName());
+				personWhoLives.setAge(personNearFirestation.getAge());
+				personWhoLives.setPhoneNumber(personNearFirestation.getPhoneNumber());
+				personWhoLives.setMedications(personNearFirestation.getMedications());
+				personWhoLives.setAllergies(personNearFirestation.getAllergies());
+				
+				listOfPerson.add(personWhoLives);
+				
+			}
+			
+			houseServedByStation.setAddress(firestation.getAddress());
+			houseServedByStation.setResident(listOfPerson);
+			listOfHouseServedbyStation.add(houseServedByStation);
+						
+		}
+		
+		return listOfHouseServedbyStation;
+		
+	}
 	
 }

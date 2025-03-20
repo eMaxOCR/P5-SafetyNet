@@ -37,13 +37,37 @@ public class FirestationRepository {
 		return firestations;
 	}
 	
-	public Firestation getOneFirestation(final String address, final Integer station) {
+	public Firestation getOneFirestationByAddressAndNumber(final String address, final Integer station) {
 		for(Firestation stationFinder : firestations) {
 			if(stationFinder.getAddress().equals(address) & stationFinder.getStation().equals(station)) {
 				return stationFinder;
 			}
 		}
 		return null; //Return null if no person detected.
+	}
+	
+	public int getFirestationNumberByAddress(final String address) {
+		for(Firestation stationFinder : firestations) {
+			if(stationFinder.getAddress().equals(address)) {
+				return stationFinder.getStation();
+			}
+		}
+		return 0; //Return 0 if no station detected.
+	}
+	
+	public List<Firestation> getAllFirestationByStationNumber(final List<Integer> listOfStationNumber) {
+		List<Firestation> listOfFireStation = new ArrayList<Firestation>();
+		
+		for(Integer stationNumber : listOfStationNumber) {
+			
+			for(Firestation stationFinder : getAllFirestations()) {
+				if(stationFinder.getStation().equals(stationNumber)) {
+					listOfFireStation.add(stationFinder) ;
+				}
+			}
+		}
+				
+		return listOfFireStation;
 	}
 	
 	public Firestation addFirestation(Firestation firestation) {
@@ -54,9 +78,7 @@ public class FirestationRepository {
 	public void deleteFirestation(final String address, final Integer station) {
 		firestations.removeIf(firestation -> firestation.getAddress().equals(address) & firestation.getStation().equals(station));
 	}
-	
-	//TODO : Edit method missing
-	
+		
 	//Constructor
 	public FirestationRepository() {
 		this.firestations = parseJsonFirestation();

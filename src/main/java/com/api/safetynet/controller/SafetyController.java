@@ -7,9 +7,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.safetynet.model.Firestation;
 import com.api.safetynet.model.Person;
 import com.api.safetynet.model.DTO.ChildInfoDTO;
+import com.api.safetynet.model.DTO.HouseNearFireStationDTO;
 import com.api.safetynet.model.DTO.PersonInfoDTO;
+import com.api.safetynet.model.DTO.PersonNearFireStationDTO;
+import com.api.safetynet.service.FirestationService;
 import com.api.safetynet.service.PersonService;
 
 @RestController
@@ -48,7 +52,7 @@ public class SafetyController {
 	@GetMapping("/personinfolastname")
 	public List<PersonInfoDTO> getPersonInformationByName(@RequestParam("lastName") String lastNameToFind){
 		//TODO Add error code. 200 or 400* (IF)
-		return personService.getPersonInformationByName(lastNameToFind);
+		return personService.getListOfPersonInformationByLastName(lastNameToFind);
 	}
 	
 	
@@ -67,8 +71,19 @@ public class SafetyController {
 	 * @param Address
 	 */
 	@GetMapping("/fire")
-	public List<Person> getPersonsByAddressAndFireStationNumber(@RequestParam("address") String addressToFind){
-		return	personService.getPersonsByAddressAndFireStationNumber(addressToFind);
+	public List<PersonNearFireStationDTO> getPersonsAndFireStationNumberByAddress(@RequestParam("address") String addressToFind){
+		//TODO Add error code. 200 or 400* (IF)
+		return	personService.getPersonsAndFireStationNumberByAddress(addressToFind);
+	}
+	
+	/**
+	 * @return Return a list of all homes served by the fire station
+	 * @param List of station number (/stations?2,4)
+	 */
+	@GetMapping("flood/stations")
+	public List<HouseNearFireStationDTO> getAllHousesServedByFireStationNumber(@RequestParam("stations") List<Integer> listOfStationNumber){
+		//TODO Add error code. 200 or 400* (IF)
+		return	personService.getAllHousesServedByFireStationNumber(listOfStationNumber);
 	}
 	
 	
