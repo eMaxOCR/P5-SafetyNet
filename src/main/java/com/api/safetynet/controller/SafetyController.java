@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.api.safetynet.model.Firestation;
 import com.api.safetynet.model.Person;
 import com.api.safetynet.model.DTO.ChildInfoDTO;
+import com.api.safetynet.model.DTO.GroupOfPersonServedByFireStationDTO;
 import com.api.safetynet.model.DTO.HouseNearFireStationDTO;
 import com.api.safetynet.model.DTO.PersonInfoDTO;
 import com.api.safetynet.model.DTO.PersonNearFireStationDTO;
@@ -84,6 +85,16 @@ public class SafetyController {
 	public List<HouseNearFireStationDTO> getAllHousesServedByFireStationNumber(@RequestParam("stations") List<Integer> listOfStationNumber){
 		//TODO Add error code. 200 or 400* (IF)
 		return	personService.getAllHousesServedByFireStationNumber(listOfStationNumber);
+	}
+	
+	/**
+	 * @return Return a list of all persons served by the fire station
+	 * @param List of station number (1)
+	 */
+	@GetMapping("firestation")
+	public List<GroupOfPersonServedByFireStationDTO> getAllPersonServedByFireStationNumber(@RequestParam("stationNumber") int stationNumber){
+		//TODO Add error code. 200 or 400* (IF)
+		return	personService.getAllPersonServedByFireStationNumber(stationNumber);
 	}
 	
 	

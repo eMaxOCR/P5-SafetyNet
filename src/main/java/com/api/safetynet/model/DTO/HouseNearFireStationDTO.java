@@ -1,7 +1,6 @@
 package com.api.safetynet.model.DTO;
 
 import java.util.List;
-import com.api.safetynet.model.Medication;
 
 public class HouseNearFireStationDTO {
 	

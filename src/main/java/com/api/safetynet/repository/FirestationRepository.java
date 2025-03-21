@@ -55,7 +55,7 @@ public class FirestationRepository {
 		return 0; //Return 0 if no station detected.
 	}
 	
-	public List<Firestation> getAllFirestationByStationNumber(final List<Integer> listOfStationNumber) {
+	public List<Firestation> getAllFirestationByStationNumberList(final List<Integer> listOfStationNumber) {
 		List<Firestation> listOfFireStation = new ArrayList<Firestation>();
 		
 		for(Integer stationNumber : listOfStationNumber) {
@@ -65,6 +65,17 @@ public class FirestationRepository {
 					listOfFireStation.add(stationFinder) ;
 				}
 			}
+		}
+				
+		return listOfFireStation;
+	}
+	
+	public List<Firestation> getAllFirestationByStationNumber(final int stationNumber) {
+		List<Firestation> listOfFireStation = new ArrayList<Firestation>();
+			for(Firestation stationFinder : getAllFirestations()) {
+				if(stationFinder.getStation().equals(stationNumber)) {
+					listOfFireStation.add(stationFinder) ;
+				}
 		}
 				
 		return listOfFireStation;

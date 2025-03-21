@@ -12,10 +12,12 @@ import com.api.safetynet.model.MedicalRecord;
 import com.api.safetynet.model.Person;
 import com.api.safetynet.model.DTO.ChildInfoDTO;
 import com.api.safetynet.model.DTO.FamilyMemberDTO;
+import com.api.safetynet.model.DTO.GroupOfPersonServedByFireStationDTO;
 import com.api.safetynet.model.DTO.HouseNearFireStationDTO;
 import com.api.safetynet.model.DTO.PersonInfoDTO;
 import com.api.safetynet.model.DTO.PersonInfoWithMedicalRecordsDTO;
 import com.api.safetynet.model.DTO.PersonNearFireStationDTO;
+import com.api.safetynet.model.DTO.PersonServedByFireStationDTO;
 import com.api.safetynet.repository.PersonRepository;
 import lombok.Data;
 
@@ -203,7 +205,7 @@ public class PersonService {
 		
 		List<HouseNearFireStationDTO> listOfHouseServedbyStation = new ArrayList<HouseNearFireStationDTO>();
 		
-		for(Firestation firestation : firestationService.getAllFirestationByStationNumber(listOfStationNumber)){ //List of fire station.
+		for(Firestation firestation : firestationService.getAllFirestationByStationNumberList(listOfStationNumber)){ //List of fire station.
 			HouseNearFireStationDTO houseServedByStation = new HouseNearFireStationDTO();
 			List<PersonInfoWithMedicalRecordsDTO> listOfPerson = new ArrayList<PersonInfoWithMedicalRecordsDTO>();
 			
@@ -227,6 +229,57 @@ public class PersonService {
 		}
 		
 		return listOfHouseServedbyStation;
+		
+	}
+	
+	public List<GroupOfPersonServedByFireStationDTO>getAllPersonServedByFireStationNumber (final int stationNumber){
+		
+		List<GroupOfPersonServedByFireStationDTO> listOfPerson = new ArrayList<GroupOfPersonServedByFireStationDTO>();
+		GroupOfPersonServedByFireStationDTO groupOfPerson = new GroupOfPersonServedByFireStationDTO();
+		List<PersonServedByFireStationDTO> personDTOList = new ArrayList<PersonServedByFireStationDTO>();
+		
+		for(Firestation firestation : firestationService.getAllFirestationByStationNumber(stationNumber)){ //List of fire station.
+			
+			
+			for(Person person : getAllPersonsFromSameAddress(firestation.getAddress())){
+				PersonServedByFireStationDTO personDTO = new PersonServedByFireStationDTO();
+				MedicalRecord medicalRecord = medicalRecordService.getOneMedicalRecord(person.getFirstName(),person.getLastName());
+				
+				personDTO.setFirsttName(person.getFirstName());
+				personDTO.setLastName(person.getLastName());
+				personDTO.setPhoneNumber(person.getPhone());
+				personDTO.setAge(calculatePersonAge(medicalRecord.getBirthdate()));
+				personDTO.setAddress(person.getAddress());
+				
+				personDTOList.add(personDTO);
+				
+			}
+		}
+					
+		//Count adults
+		int adultCount = 0;
+		for(PersonServedByFireStationDTO i : personDTOList) {
+			if(i.getAge() >= 18) {
+				adultCount = adultCount + 1;
+			}
+		}
+		groupOfPerson.setAdultCount(adultCount); 
+		
+		//Count childs
+		int childCount = 0;
+		for(PersonServedByFireStationDTO i : personDTOList) {
+			if(i.getAge() <= 18) {
+				childCount = childCount + 1;
+			}
+		}
+		groupOfPerson.setChildCount(childCount); 
+		groupOfPerson.setResident(personDTOList);
+		
+		listOfPerson.add(groupOfPerson);
+						
+		
+		
+		return listOfPerson;
 		
 	}
 	

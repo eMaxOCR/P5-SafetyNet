@@ -1,6 +1,5 @@
 package com.api.safetynet.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,8 +26,12 @@ public class FirestationService {
 		return firestationRepository.getFirestationNumberByAddress(address);
 	}
 	
-	public List<Firestation> getAllFirestationByStationNumber(final List<Integer> listOfStationNumber){
-		return firestationRepository.getAllFirestationByStationNumber(listOfStationNumber);
+	public List<Firestation> getAllFirestationByStationNumberList(final List<Integer> listOfStationNumber){
+		return firestationRepository.getAllFirestationByStationNumberList(listOfStationNumber);
+	}
+	
+	public List<Firestation> getAllFirestationByStationNumber(final int stationNumber){
+		return firestationRepository.getAllFirestationByStationNumber(stationNumber);
 	}
 	
 	public Firestation addFirestation (final Firestation firestation) {
@@ -40,20 +43,5 @@ public class FirestationService {
 		firestationRepository.deleteFirestation(address, station);
 	}
 	
-//	/**
-//	 * @param List of station's number. (eg 1, 3)
-//	 * @return Return an list of fire station by their number.
-//	 */
-//	public List<Firestation> getListOfFirestationByStationNumber(List<Integer> listStationNumber){
-//		
-//		List<Firestation> listOfFireStations = new ArrayList<Firestation>();
-//		
-//		for(Integer stationNumner : listStationNumber) {
-//			listOfFireStations.add(getAllFirestationByStationNumber(stationNumner));
-//		}
-//		
-//		return listOfFireStations;
-//	
-//	}
 		
 }
