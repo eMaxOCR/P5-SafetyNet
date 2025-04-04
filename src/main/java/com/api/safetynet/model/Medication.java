@@ -2,11 +2,12 @@ package com.api.safetynet.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@Getter @Setter
 public class Medication {
 	
 	//Attributes
@@ -24,22 +25,4 @@ public class Medication {
 			this.quantityInMg = parts[1];
 		}
 	}
-	
-	//Getters & setters
-	public String getMedicationName() {
-		return medicationName;
-	}
-
-	public void setMedicationName(String medicationName) {
-		this.medicationName = medicationName;
-	}
-
-	public String getQuantityInMg() {
-		return quantityInMg;
-	}
-
-	public void setQuantityInMg(String quantityInMg) {
-		this.quantityInMg = quantityInMg;
-	}
-
 }

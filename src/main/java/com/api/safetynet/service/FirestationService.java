@@ -39,8 +39,8 @@ public class FirestationService {
 		return addedFirestation;
 	}
 	
-	public void deleteFirestation(final String address, final Integer station) {
-		firestationRepository.deleteFirestation(address, station);
+	public Boolean deleteFirestation(final String address, final Integer station) {
+		return firestationRepository.deleteFirestation(address, station);
 	}
 	
 		

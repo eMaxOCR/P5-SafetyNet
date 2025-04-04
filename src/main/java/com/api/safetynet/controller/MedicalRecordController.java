@@ -1,8 +1,10 @@
 package com.api.safetynet.controller;
 
+import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.api.safetynet.model.MedicalRecord;
 import com.api.safetynet.model.Medication;
 import com.api.safetynet.service.MedicalRecordService;
@@ -27,8 +30,9 @@ public class MedicalRecordController {
 	 * @return All medical records from json's data
 	 */
 	@GetMapping()
-	public Iterable<MedicalRecord> getAllMedicalRecord(){
-		return medicalRecordService.getAllMedicalRecord();
+	public ResponseEntity<Iterable<MedicalRecord>> getAllMedicalRecord(){
+		Iterable<MedicalRecord> result = medicalRecordService.getAllMedicalRecord();
+		return ResponseEntity.ok(result);
 	}
 	
 	/**
@@ -37,8 +41,12 @@ public class MedicalRecordController {
 	 * @return One medical record from json's data
 	 */
 	@GetMapping("/{firstName}/{lastName}")
-	public MedicalRecord getOneMedicalRecord(@PathVariable("firstName") final String firstName,@PathVariable("lastName") final String lastName) {
-		return medicalRecordService.getOneMedicalRecord(firstName, lastName);
+	public ResponseEntity<MedicalRecord> getOneMedicalRecord(@PathVariable("firstName") final String firstName,@PathVariable("lastName") final String lastName) {
+		MedicalRecord result = medicalRecordService.getOneMedicalRecord(firstName, lastName);
+		if(result == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(result);
 	}
 	
 	/**
@@ -47,8 +55,17 @@ public class MedicalRecordController {
 	 * @return The "MedicalRecord" object saved.
 	 */
 	@PostMapping()
-	public MedicalRecord addMedicalRecord(@RequestBody MedicalRecord medicalrecord) {
-		return medicalRecordService.addMedicalRecord(medicalrecord);
+	public ResponseEntity<MedicalRecord> addMedicalRecord(@RequestBody MedicalRecord medicalrecord) {
+		MedicalRecord result = medicalRecordService.addMedicalRecord(medicalrecord);
+		
+		URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{firstName}/{lastName}")
+                .buildAndExpand(result.getFirstName(),result.getLastName())
+                .toUri(); //Sent URI to header.
+		
+		return ResponseEntity.created(location).body(result);
+		
 	}
 	
 	/**
@@ -59,8 +76,12 @@ public class MedicalRecordController {
 	 */
 	
 	@PutMapping("/{firstName}/{lastName}")
-	public MedicalRecord updatePerson(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName, @RequestBody MedicalRecord medicalRecord) {
+	public ResponseEntity<MedicalRecord> updatePerson(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName, @RequestBody MedicalRecord medicalRecord) {
 		MedicalRecord medicalRecordToEdit = medicalRecordService.getOneMedicalRecord(firstName, lastName); //Take MedicalRecord object that have to be updated.
+		
+		if(medicalRecordToEdit == null) {
+			return ResponseEntity.notFound().build();
+		}
 		
 		Date birthdate = medicalRecord.getBirthdate();
 		if(birthdate != null) {
@@ -77,7 +98,7 @@ public class MedicalRecordController {
 			medicalRecordToEdit.setAllergies(allergies);
 		}
 		
-		return medicalRecordToEdit;
+		return ResponseEntity.ok(medicalRecordToEdit);
 	}
 	
 	/**
@@ -85,8 +106,13 @@ public class MedicalRecordController {
 	 * @param /api/medicalrecord/{firstName}/{lastName}
 	 */
 	@DeleteMapping("/{firstName}/{lastName}")
-	public void deleteMedicalRecord(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName) {
-		medicalRecordService.deleteMedicalRecord(firstName, lastName);
+	public ResponseEntity<Void> deleteMedicalRecord(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName) {
+		Boolean hasBeenDeleted = medicalRecordService.deleteMedicalRecord(firstName, lastName);
+		if(!hasBeenDeleted) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.noContent().build();
+		
 	}
 	
 }

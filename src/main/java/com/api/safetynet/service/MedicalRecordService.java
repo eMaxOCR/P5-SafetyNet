@@ -30,8 +30,8 @@ public class MedicalRecordService {
 		return addedMedicalRecord;
 	}
 	
-	public void deleteMedicalRecord(final String firstName, final String lastName) {
-		medicalRecordRepository.deleteMedicalRecord(firstName, lastName);
+	public Boolean deleteMedicalRecord(final String firstName, final String lastName) {
+		return medicalRecordRepository.deleteMedicalRecord(firstName, lastName);
 	}
 	
 	public List<MedicalRecord> getChildMedicalRecord() {

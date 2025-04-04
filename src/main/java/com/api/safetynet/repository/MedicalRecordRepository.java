@@ -11,6 +11,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Repository
 public class MedicalRecordRepository {
 	
@@ -20,7 +23,7 @@ public class MedicalRecordRepository {
 	//Constructor
 	public MedicalRecordRepository() {
 		this.medicalRecords = parseJsonMedicalRecord();//Call method at app's lunch.
-		System.out.println("\"MedicalRecord\" repository created. (" + this.medicalRecords.size() + " found)"); //Log that the repository as been created with how many persons.
+		log.info("\"MedicalRecord\" repository created. (" + this.medicalRecords.size() + " found)"); //Log that the repository as been created with how many persons.
 	}
 	
 	//Functions
@@ -78,8 +81,11 @@ public class MedicalRecordRepository {
 		return medicalRecord;
 	}
 	
-	public void deleteMedicalRecord(final String firstName, final String lastName) {
-		medicalRecords.removeIf(medicalRecord -> medicalRecord.getFirstName().equals(firstName) & medicalRecord.getLastName().equals(lastName));
+	public Boolean deleteMedicalRecord(final String firstName, final String lastName) {
+		if(medicalRecords.removeIf(medicalRecord -> medicalRecord.getFirstName().equals(firstName) & medicalRecord.getLastName().equals(lastName))) {
+			return true;
+		}
+		return false;
 	}
 
 }

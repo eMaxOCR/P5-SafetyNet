@@ -1,6 +1,8 @@
 package com.api.safetynet.controller;
 
+import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,12 +11,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.api.safetynet.model.Person;
 import com.api.safetynet.service.PersonService;
 
 @RequestMapping("/api/person")
 @RestController
 public class PersonController {
+	
 	
 	@Autowired
 	private PersonService personService;
@@ -24,8 +28,9 @@ public class PersonController {
 	 * @return All persons from json's data
 	 */
 	@GetMapping() 
-	public Iterable<Person> getAllPerson(){
-		return personService.getAllPerson();
+	public ResponseEntity<Iterable<Person>> getAllPerson(){
+		Iterable<Person> result = personService.getAllPerson();
+		return ResponseEntity.ok(result);
 	}
 	
 	/**
@@ -34,18 +39,30 @@ public class PersonController {
 	 * @return One person from json's data
 	 */
 	@GetMapping("/{firstName}/{lastName}") 
-	public Person getOnePerson(@PathVariable("firstName") final String firstName,@PathVariable("lastName") final String lastName){
-		return personService.getOnePerson(firstName, lastName);
+	public ResponseEntity<Person> getOnePerson(@PathVariable("firstName") final String firstName,@PathVariable("lastName") final String lastName){
+		Person result = personService.getOnePerson(firstName, lastName);
+		if(result == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(result);
 	}
 	
 	/**
 	 * Create/add a person
-	 * @param person An object person. ("firstName", "lastName", "address", "city", "zip", "phone", "email")
+	 * @param An object person. ("firstName", "lastName", "address", "city", "zip", "phone", "email")
 	 * @return The "Person" object saved.
 	 */
 	@PostMapping()
-	public Person addPerson(@RequestBody Person person) {
-		return personService.addPerson(person);
+	public ResponseEntity<Person> addPerson(@RequestBody Person person) { 
+		Person result = personService.addPerson(person);
+		
+		URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{firstName}/{lastName}")
+                .buildAndExpand(result.getFirstName(),result.getLastName())
+                .toUri(); //Sent URI to header.
+		
+		return ResponseEntity.created(location).body(result);
 	}
 	
 	/**
@@ -55,8 +72,12 @@ public class PersonController {
 	 * @return Update information.
 	 */
 	@PutMapping("/{firstName}/{lastName}")
-	public Person updatePerson(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName, @RequestBody Person person) {
+	public ResponseEntity<Person> updatePerson(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName, @RequestBody Person person) {
 		Person personToEdit = personService.getOnePerson(firstName, lastName);//Take Person object that have to be updated.
+		
+		if(personToEdit == null) {
+			return ResponseEntity.notFound().build(); //build force when no body.
+		}
 		
 		String address = person.getAddress();
 		if(address != null) {
@@ -83,17 +104,21 @@ public class PersonController {
 			personToEdit.setEmail(email);
 		}
 		
-		return personToEdit;
+		return ResponseEntity.ok(personToEdit);
 
 	}
 	
 	/**
 	 * Delete a person
-	 * @param /api/person/{firstName}/{lastName}
+	 * @param {firstName}/{lastName}
 	 */
 	@DeleteMapping("/{firstName}/{lastName}")
-	public void deletePerson(@PathVariable("firstName") final String firstName,@PathVariable("lastName") final String lastName) {
-		personService.deletePerson(firstName, lastName);
+	public ResponseEntity<Void> deletePerson(@PathVariable("firstName") final String firstName,@PathVariable("lastName") final String lastName) {
+		Boolean hasBeenDeleted = personService.deletePerson(firstName, lastName);
+		if(!hasBeenDeleted) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.noContent().build();
 	}
 	
 }

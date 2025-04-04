@@ -1,7 +1,10 @@
 package com.api.safetynet.model.DTO;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter @Setter
 public class HouseNearFireStationDTO {
 	
 	//Attributes
@@ -10,22 +13,5 @@ public class HouseNearFireStationDTO {
 	
 	//Default constructor
 	public HouseNearFireStationDTO() {}
-
-	//Getters & Setters
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public List<PersonInfoWithMedicalRecordsDTO> getResident() {
-		return resident;
-	}
-
-	public void setResident(List<PersonInfoWithMedicalRecordsDTO> resident) {
-		this.resident = resident;
-	}
 	
 }

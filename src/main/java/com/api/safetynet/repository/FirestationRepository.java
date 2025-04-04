@@ -9,6 +9,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Repository
 public class FirestationRepository {
 	
@@ -86,14 +89,17 @@ public class FirestationRepository {
 		return firestation;
 	}
 	
-	public void deleteFirestation(final String address, final Integer station) {
-		firestations.removeIf(firestation -> firestation.getAddress().equals(address) & firestation.getStation().equals(station));
+	public Boolean deleteFirestation(final String address, final Integer station) {
+		if(firestations.removeIf(firestation -> firestation.getAddress().equals(address) & firestation.getStation().equals(station))) {
+			return true;
+		}
+		return false;
 	}
 		
 	//Constructor
 	public FirestationRepository() {
 		this.firestations = parseJsonFirestation();
-		System.out.println("\"Firestation\" repository created. (" + this.firestations.size() + " found)"); //Log that the repository as been created with how many persons.
+		log.info("\"Firestation\" repository created. (" + this.firestations.size() + " found)"); //Log that the repository as been created with how many persons.
 	
 	}
 	

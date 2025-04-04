@@ -3,99 +3,121 @@ package com.api.safetynet.controller;
 import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.api.safetynet.model.Firestation;
-import com.api.safetynet.model.Person;
 import com.api.safetynet.model.DTO.ChildInfoDTO;
+import com.api.safetynet.model.DTO.GroupOfPersonNearFireStationDTO;
 import com.api.safetynet.model.DTO.GroupOfPersonServedByFireStationDTO;
 import com.api.safetynet.model.DTO.HouseNearFireStationDTO;
 import com.api.safetynet.model.DTO.PersonInfoDTO;
-import com.api.safetynet.model.DTO.PersonNearFireStationDTO;
-import com.api.safetynet.service.FirestationService;
 import com.api.safetynet.service.PersonService;
 
 @RestController
 public class SafetyController {
+	
 	
 	@Autowired
 	private PersonService personService;
 		
 	
 	/**
-	 * TODO Explain what function do
+	 * @return List of phone numbers of rsidents served by fire station.
 	 * @param firestation number
 	 */
 	@GetMapping("/phonealert")
-	public Set<String> getPersonPhoneNumberByFirestation(@RequestParam("firestation") int stationNumber){
-		//TODO Add error code. 200 or 400* (IF)
-		return personService.getPersonPhoneNumberByFirestation(stationNumber);
+	public ResponseEntity<Set<String>> getPersonPhoneNumberByFirestation(@RequestParam("firestation") int stationNumber){
+		Set<String> result = personService.getPersonPhoneNumberByFirestation(stationNumber);
+		if(result.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	
 	/**
-	 * TODO Explain what function do
-	 * @param City
+	 * @return Return list of mail of person from the city.
+	 * @param City (eg: Culver)
 	 */
 	@GetMapping("/communityemail")
-	public Set<String> getPersonEmailByCity(@RequestParam("city") String cityToFind){
-		//TODO Add error code. 200 or 400* (IF)
-		return personService.getPersonEmailByCity(cityToFind);
+	public ResponseEntity<Set<String>> getPersonEmailByCity(@RequestParam("city") String cityToFind){
+		Set<String> result = personService.getPersonEmailByCity(cityToFind);
+		if(result.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	
 	/**
-	 * @return all person's informations (Medications with posology and allergies)
-	 * @param Lastname
+	 * @return All person's informations (Medications with posology and allergies)
+	 * @param Lastname (eg: Boyd)
 	 */
 	@GetMapping("/personinfolastname")
-	public List<PersonInfoDTO> getPersonInformationByName(@RequestParam("lastName") String lastNameToFind){
-		//TODO Add error code. 200 or 400* (IF)
-		return personService.getListOfPersonInformationByLastName(lastNameToFind);
+	public ResponseEntity<List<PersonInfoDTO>> getPersonInformationByName(@RequestParam("lastName") String lastNameToFind){
+		List<PersonInfoDTO> result = personService.getListOfPersonInformationByLastName(lastNameToFind);
+		if(result.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	
 	/**
-	 * TODO Explain what function do
-	 * @param Address
+	 * @return Return a list of children by address with an list of family member.
+	 * @param Address (eg: 947 E. Rose Dr)
 	 */
 	@GetMapping("/childalert")
-	public List<ChildInfoDTO> getChildInformationsByAddress(@RequestParam("address") String addressToFind){
-		//TODO Add error code. 200 or 400* (IF)
-		return personService.getChildInformationsByAddress(addressToFind);
+	public ResponseEntity<List<ChildInfoDTO>> getChildInformationsByAddress(@RequestParam("address") String addressToFind){
+		List<ChildInfoDTO> result = personService.getChildInformationsByAddress(addressToFind);
+		if(result.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	/**
 	 * @return List of person who lives at this address with the fire station nearby.
-	 * @param Address
+	 * @param Address (eg: 947 E. Rose Dr)
 	 */
 	@GetMapping("/fire")
-	public List<PersonNearFireStationDTO> getPersonsAndFireStationNumberByAddress(@RequestParam("address") String addressToFind){
-		//TODO Add error code. 200 or 400* (IF)
-		return	personService.getPersonsAndFireStationNumberByAddress(addressToFind);
+	public ResponseEntity<GroupOfPersonNearFireStationDTO> getPersonsAndFireStationNumberByAddress(@RequestParam("address") String addressToFind){
+		GroupOfPersonNearFireStationDTO result = personService.getPersonsAndFireStationNumberByAddress(addressToFind);
+		if(result.getResidents().isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	/**
 	 * @return Return a list of all homes served by the fire station
-	 * @param List of station number (/stations?2,4)
+	 * @param List of station number (eg : /stations?2,4)
 	 */
 	@GetMapping("flood/stations")
-	public List<HouseNearFireStationDTO> getAllHousesServedByFireStationNumber(@RequestParam("stations") List<Integer> listOfStationNumber){
-		//TODO Add error code. 200 or 400* (IF)
-		return	personService.getAllHousesServedByFireStationNumber(listOfStationNumber);
+	public ResponseEntity<List<HouseNearFireStationDTO>> getAllHousesServedByFireStationNumber(@RequestParam("stations") List<Integer> listOfStationNumber){
+		List<HouseNearFireStationDTO> result = personService.getAllHousesServedByFireStationNumber(listOfStationNumber);
+		if(result.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	/**
 	 * @return Return a list of all persons served by the fire station
-	 * @param List of station number (1)
+	 * @param Station number (eg: 1)
 	 */
-	@GetMapping("firestation")
-	public List<GroupOfPersonServedByFireStationDTO> getAllPersonServedByFireStationNumber(@RequestParam("stationNumber") int stationNumber){
-		//TODO Add error code. 200 or 400* (IF)
-		return	personService.getAllPersonServedByFireStationNumber(stationNumber);
+	@GetMapping("/firestation")
+	public ResponseEntity<GroupOfPersonServedByFireStationDTO> getAllPersonServedByFireStationNumber(@RequestParam("stationNumber") int stationNumber){
+		
+		GroupOfPersonServedByFireStationDTO result = personService.getAllPersonServedByFireStationNumber(stationNumber);
+		
+		if(result.getResidents().isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+				
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-	
-	
+		
 }
