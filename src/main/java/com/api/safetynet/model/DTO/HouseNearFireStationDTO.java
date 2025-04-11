@@ -1,17 +1,15 @@
 package com.api.safetynet.model.DTO;
 
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter @Setter
+@Data
+@NoArgsConstructor
 public class HouseNearFireStationDTO {
 	
 	//Attributes
 	private String address;
 	private List<PersonInfoWithMedicalRecordsDTO> resident;
-	
-	//Default constructor
-	public HouseNearFireStationDTO() {}
 	
 }

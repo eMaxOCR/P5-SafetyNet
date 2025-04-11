@@ -15,6 +15,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.api.safetynet.model.Person;
 import com.api.safetynet.service.PersonService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RequestMapping("/api/person")
 @RestController
 public class PersonController {
@@ -30,6 +33,7 @@ public class PersonController {
 	@GetMapping() 
 	public ResponseEntity<Iterable<Person>> getAllPerson(){
 		Iterable<Person> result = personService.getAllPerson();
+		log.info("Persons founds : {}", result);
 		return ResponseEntity.ok(result);
 	}
 	
@@ -42,8 +46,10 @@ public class PersonController {
 	public ResponseEntity<Person> getOnePerson(@PathVariable("firstName") final String firstName,@PathVariable("lastName") final String lastName){
 		Person result = personService.getOnePerson(firstName, lastName);
 		if(result == null) {
+			log.error("Person {} {} cannot be found.", firstName, lastName);
 			return ResponseEntity.notFound().build();
 		}
+		log.info("Person found : {}", result);
 		return ResponseEntity.ok(result);
 	}
 	
@@ -62,6 +68,7 @@ public class PersonController {
                 .buildAndExpand(result.getFirstName(),result.getLastName())
                 .toUri(); //Sent URI to header.
 		
+		log.info("Person {} added.", result);
 		return ResponseEntity.created(location).body(result);
 	}
 	
@@ -73,37 +80,15 @@ public class PersonController {
 	 */
 	@PutMapping("/{firstName}/{lastName}")
 	public ResponseEntity<Person> updatePerson(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName, @RequestBody Person person) {
-		Person personToEdit = personService.getOnePerson(firstName, lastName);//Take Person object that have to be updated.
+		
+		Person personToEdit = personService.updatePerson(firstName, lastName, person);
 		
 		if(personToEdit == null) {
+			log.error("Person {} {} cannot be found.", firstName, lastName);
 			return ResponseEntity.notFound().build(); //build force when no body.
 		}
 		
-		String address = person.getAddress();
-		if(address != null) {
-			personToEdit.setAddress(address);
-		}
-		
-		String city = person.getCity();
-		if(city != null) {
-			personToEdit.setCity(city);
-		}
-		
-		int zip = person.getZip();
-		if(zip != 0) {
-			personToEdit.setZip(zip);
-		}
-		
-		String phone = person.getPhone();
-		if(phone != null) {
-			personToEdit.setPhone(phone);
-		}
-		
-		String email = person.getEmail();
-		if(email != null) {
-			personToEdit.setEmail(email);
-		}
-		
+		log.info("Person {} {} updated.", personToEdit.getFirstName(), personToEdit.getLastName());
 		return ResponseEntity.ok(personToEdit);
 
 	}
@@ -116,8 +101,10 @@ public class PersonController {
 	public ResponseEntity<Void> deletePerson(@PathVariable("firstName") final String firstName,@PathVariable("lastName") final String lastName) {
 		Boolean hasBeenDeleted = personService.deletePerson(firstName, lastName);
 		if(!hasBeenDeleted) {
+			log.error("Person {} {} cannot be found.", firstName, lastName);
 			return ResponseEntity.notFound().build();
 		}
+		log.info("Person {} {} deleted.", firstName, lastName);
 		return ResponseEntity.noContent().build();
 	}
 	

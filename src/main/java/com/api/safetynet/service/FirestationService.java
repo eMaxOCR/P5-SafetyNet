@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import com.api.safetynet.model.Firestation;
 import com.api.safetynet.repository.FirestationRepository;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Data
 @Service
 public class FirestationService {
@@ -19,6 +21,7 @@ public class FirestationService {
 	}
 	
 	public Firestation getOneFirestationByAddressAndStationNumber(final String address, final Integer station){
+		log.debug("Get one fire station");
 		return firestationRepository.getOneFirestationByAddressAndNumber(address, station);
 	}
 	
@@ -38,6 +41,17 @@ public class FirestationService {
 		Firestation addedFirestation = firestationRepository.addFirestation(firestation);
 		return addedFirestation;
 	}
+	
+	public Firestation updateFirestation (String address, Integer station, Firestation firestation) {
+		Firestation firestationToEdit = getOneFirestationByAddressAndStationNumber(address, station);
+		Integer stationVar = firestation.getStation();
+		if(stationVar != null) {
+			firestationToEdit.setStation(stationVar);
+		}
+		//TODO : SAVE MISSING VIA firestationService.
+		return firestationToEdit;
+	}
+	
 	
 	public Boolean deleteFirestation(final String address, final Integer station) {
 		return firestationRepository.deleteFirestation(address, station);

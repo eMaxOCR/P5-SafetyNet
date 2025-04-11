@@ -3,10 +3,11 @@ package com.api.safetynet.model.DTO;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter @Setter
+@Data
+@NoArgsConstructor
 public class FamilyMemberDTO {
 	
 	//Attributes
@@ -16,8 +17,5 @@ public class FamilyMemberDTO {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
 	private Date birthdate;
 	private int age;
-		
-	//Default constructor
-	public FamilyMemberDTO() {}
 
 }

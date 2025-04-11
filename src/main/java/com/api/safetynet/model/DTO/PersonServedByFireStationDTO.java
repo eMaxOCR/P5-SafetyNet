@@ -1,14 +1,11 @@
 package com.api.safetynet.model.DTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @Data
-@Getter @Setter
+@NoArgsConstructor
 public class PersonServedByFireStationDTO {
 	
 	//Attributes
@@ -18,8 +15,5 @@ public class PersonServedByFireStationDTO {
 	private String phoneNumber;
 	@JsonIgnore
 	private int age;
-	
-	//Default constructor
-	public PersonServedByFireStationDTO() {}
 	
 }

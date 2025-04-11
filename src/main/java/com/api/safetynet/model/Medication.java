@@ -1,21 +1,15 @@
 package com.api.safetynet.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@Getter @Setter
+@NoArgsConstructor
 public class Medication {
 	
 	//Attributes
 	private String medicationName;
 	private String quantityInMg;
-	
-	//Default constructor
-	public Medication() {}
 	
 	//Custom constructor to define content registration
 	public Medication(String medicationString) {

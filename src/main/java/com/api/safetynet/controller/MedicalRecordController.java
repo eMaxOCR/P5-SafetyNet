@@ -18,6 +18,9 @@ import com.api.safetynet.model.MedicalRecord;
 import com.api.safetynet.model.Medication;
 import com.api.safetynet.service.MedicalRecordService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RequestMapping("/api/medicalrecord")
 @RestController
 public class MedicalRecordController {
@@ -32,6 +35,7 @@ public class MedicalRecordController {
 	@GetMapping()
 	public ResponseEntity<Iterable<MedicalRecord>> getAllMedicalRecord(){
 		Iterable<MedicalRecord> result = medicalRecordService.getAllMedicalRecord();
+		log.info("All medical records found: {}", result);
 		return ResponseEntity.ok(result);
 	}
 	
@@ -44,8 +48,10 @@ public class MedicalRecordController {
 	public ResponseEntity<MedicalRecord> getOneMedicalRecord(@PathVariable("firstName") final String firstName,@PathVariable("lastName") final String lastName) {
 		MedicalRecord result = medicalRecordService.getOneMedicalRecord(firstName, lastName);
 		if(result == null) {
+			log.error("{} {}'s medical record not found.", firstName, lastName);
 			return ResponseEntity.notFound().build();
 		}
+		log.info("{} {}'s medical record : {}", firstName, lastName, result);
 		return ResponseEntity.ok(result);
 	}
 	
@@ -63,7 +69,7 @@ public class MedicalRecordController {
                 .path("/{firstName}/{lastName}")
                 .buildAndExpand(result.getFirstName(),result.getLastName())
                 .toUri(); //Sent URI to header.
-		
+		log.info("{} {}'s medical record created.", result);
 		return ResponseEntity.created(location).body(result);
 		
 	}
@@ -76,28 +82,15 @@ public class MedicalRecordController {
 	 */
 	
 	@PutMapping("/{firstName}/{lastName}")
-	public ResponseEntity<MedicalRecord> updatePerson(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName, @RequestBody MedicalRecord medicalRecord) {
-		MedicalRecord medicalRecordToEdit = medicalRecordService.getOneMedicalRecord(firstName, lastName); //Take MedicalRecord object that have to be updated.
+	public ResponseEntity<MedicalRecord> updateMedicalRecord(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName, @RequestBody MedicalRecord medicalRecord) {
+		MedicalRecord medicalRecordToEdit = medicalRecordService.updateMedicalRecord(firstName, lastName, medicalRecord); //Take MedicalRecord object that have to be updated.
 		
 		if(medicalRecordToEdit == null) {
+			log.error("Can't update {} {}'s medical record. Not found.", firstName, lastName);
 			return ResponseEntity.notFound().build();
 		}
-		
-		Date birthdate = medicalRecord.getBirthdate();
-		if(birthdate != null) {
-			medicalRecordToEdit.setBirthdate(birthdate);
-		}
-		
-		List<Medication> medication = medicalRecord.getMedications();
-		if(medication != null) {
-			medicalRecordToEdit.setMedications(medication);
-		}
-		
-		List<String> allergies = medicalRecord.getAllergies();
-		if(allergies != null) {
-			medicalRecordToEdit.setAllergies(allergies);
-		}
-		
+				
+		log.info("{} {}'s medical record updated.", firstName, lastName);
 		return ResponseEntity.ok(medicalRecordToEdit);
 	}
 	
@@ -109,8 +102,10 @@ public class MedicalRecordController {
 	public ResponseEntity<Void> deleteMedicalRecord(@PathVariable("firstName") final String firstName, @PathVariable("lastName") final String lastName) {
 		Boolean hasBeenDeleted = medicalRecordService.deleteMedicalRecord(firstName, lastName);
 		if(!hasBeenDeleted) {
+			log.error("Can't delete {} {}'s medical record. Not found.", firstName, lastName);
 			return ResponseEntity.notFound().build();
 		}
+		log.info("{} {}'s medical record has been deleted.", firstName, lastName);
 		return ResponseEntity.noContent().build();
 		
 	}

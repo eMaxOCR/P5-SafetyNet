@@ -32,7 +32,7 @@ public class FirestationController {
 	@GetMapping()
 	public ResponseEntity<Iterable<Firestation>> getAllFirestation(){
 		Iterable<Firestation> result = firestationService.getAllFirestation();
-		log.info("All fire stations found: " + result);
+		log.info("All fire stations found : {} ",result);
 		return ResponseEntity.ok(result);
 	}
 	
@@ -45,10 +45,10 @@ public class FirestationController {
 	public ResponseEntity<Firestation> getOneFirestation(@PathVariable("address") final String address,@PathVariable("station") final Integer station){
 		Firestation result = firestationService.getOneFirestationByAddressAndStationNumber(address, station);
 		if(result == null) {
-			log.error("No fire station found with the arguments: \"" + address + "\" and \"" + station +"\". Element didn't exist.");
+			log.error("No fire station found with the arguments: {} and {}. Element didn't exist.", address, station);
 			return ResponseEntity.notFound().build();
 		}
-		log.info("One fire stations found: " + result);
+		log.info("One fire stations found: {}", result);
 		return ResponseEntity.ok(result);
 	}
 	
@@ -66,7 +66,7 @@ public class FirestationController {
                 .path("/{address}/{fireStation}")
                 .buildAndExpand(result.getAddress(),result.getStation())
                 .toUri(); //Sent URI to header.
-		log.info("Fire station: \"" + result + "\" created.");
+		log.info("Fire station: {} created.", result);
 		return ResponseEntity.created(location).body(result); 
 	}
 	
@@ -78,19 +78,14 @@ public class FirestationController {
 	 */
 	@PutMapping("/{address}/{station}")
 	public ResponseEntity<Firestation> updateFirestation(@PathVariable("address") final String address, @PathVariable("station") final int station, @RequestBody Firestation firestation) {
-		Firestation firestationToEdit = firestationService.getOneFirestationByAddressAndStationNumber(address, station);
+		Firestation firestationToEdit = firestationService.updateFirestation(address, station, firestation);
 		
 		if(firestationToEdit == null) {
-			log.error("Can't update fire station informations with the arguments: \"" + address + "\" and \"" + station +"\". Element didn't exist" );
+			log.error("Can't update fire station informations with the arguments: {} {}. Element didn't exist", address, station);
 			return ResponseEntity.notFound().build(); //build force when no body.
 		}
 
-		Integer stationVar = firestation.getStation();
-		if(stationVar != null) {
-			firestationToEdit.setStation(stationVar);
-		}
-		//TODO : SAVE MISSING VIA firestationService.
-		log.info("Fire station: \"" + firestationToEdit + "\" updated.");
+		log.info("Fire station: {} updated.", firestationToEdit);
 		return ResponseEntity.ok(firestationToEdit);
 	}
 	
@@ -102,10 +97,10 @@ public class FirestationController {
 	public ResponseEntity<Void> deleteFirestation(@PathVariable("address") final String address,@PathVariable("station") final Integer station) {
 		Boolean hasBeenDeleted = firestationService.deleteFirestation(address, station);
 		if(!hasBeenDeleted) {
-			log.error("Can't delete fire station with the arguments: \"" + address + "\" and \"" + station +"\". Element didn't exist" );
+			log.error("Can't delete fire station with the arguments: {} {}. Element didn't exist", address,  station);
 			return ResponseEntity.notFound().build(); //TODO Check with mentor about code number
 		}
-		log.info("Fire station: \"" + address + "\" and \"" + station +"\"" + " deleted.");
+		log.info("Fire station: {} {} deleted.", address,  station);
 		return ResponseEntity.noContent().build();
 	}		
 }

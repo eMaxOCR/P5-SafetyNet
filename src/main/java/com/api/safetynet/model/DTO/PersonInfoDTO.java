@@ -4,10 +4,11 @@ import java.util.Date;
 import java.util.List;
 import com.api.safetynet.model.Medication;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter @Setter
+@Data
+@NoArgsConstructor
 public class PersonInfoDTO {
 	
 	//Attributes
@@ -18,8 +19,5 @@ public class PersonInfoDTO {
 	private String email;
 	private List<Medication> medications;
 	private List<String> allergies;
-	
-	//Default constructor
-	public PersonInfoDTO() {}
 	
 }

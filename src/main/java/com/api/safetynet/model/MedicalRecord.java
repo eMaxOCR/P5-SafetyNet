@@ -3,14 +3,11 @@ package com.api.safetynet.model;
 import java.util.Date;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@Getter @Setter
+@NoArgsConstructor
 public class MedicalRecord {
 	
 	//Attributes
@@ -20,8 +17,5 @@ public class MedicalRecord {
 	private Date birthdate; 
 	private List<Medication> medications;
 	private List<String> allergies;
-	
-	//Default constructor
-	public MedicalRecord() {}
-	
+		
 }

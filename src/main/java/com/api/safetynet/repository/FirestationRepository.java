@@ -18,6 +18,7 @@ public class FirestationRepository {
 	private List<Firestation> firestations;
 	
 	private List<Firestation> parseJsonFirestation(){
+		log.debug("Loading JSON fire station.");
 		ObjectMapper objectMapper = new ObjectMapper();//Create Jackon's object mapper
 		
 		List<Firestation> firestationList = new ArrayList<Firestation>();
@@ -30,76 +31,90 @@ public class FirestationRepository {
 			firestationList = objectMapper.readValue(firestationNode.toString(), new TypeReference<List<Firestation>>() {});
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.debug(e.getMessage());
 		}
 		
 		return firestationList;
 	}
 	
 	public List<Firestation> getAllFirestations(){
+		log.debug("List of all fire stations : {} " ,firestations);
 		return firestations;
 	}
 	
 	public Firestation getOneFirestationByAddressAndNumber(final String address, final Integer station) {
+		log.debug("Searching fire station by address : {}, and station number : {} ..." , address, station);
 		for(Firestation stationFinder : firestations) {
-			if(stationFinder.getAddress().equals(address) & stationFinder.getStation().equals(station)) {
+			if(stationFinder.getAddress().equals(address) & stationFinder.getStation() == station) {
+				log.debug("Station found : " , stationFinder);
 				return stationFinder;
 			}
 		}
+		log.debug("No fire station found in this address : {} and station's number : {}" , address, station); 
 		return null; //Return null if no person detected.
 	}
 	
 	public int getFirestationNumberByAddress(final String address) {
+		log.debug("Searching fire station by address : {} ..." , address);
 		for(Firestation stationFinder : firestations) {
 			if(stationFinder.getAddress().equals(address)) {
+				log.debug("Station found : {}",stationFinder.getStation());
 				return stationFinder.getStation();
 			}
 		}
+		log.debug("No fire station found with this address : {}", address);
 		return 0; //Return 0 if no station detected.
 	}
 	
 	public List<Firestation> getAllFirestationByStationNumberList(final List<Integer> listOfStationNumber) {
 		List<Firestation> listOfFireStation = new ArrayList<Firestation>();
 		
+		log.debug("Searching fire station by station's number : {} ...", listOfStationNumber);
 		for(Integer stationNumber : listOfStationNumber) {
 			
 			for(Firestation stationFinder : getAllFirestations()) {
-				if(stationFinder.getStation().equals(stationNumber)) {
+				if(stationFinder.getStation() == stationNumber) {
 					listOfFireStation.add(stationFinder) ;
 				}
 			}
 		}
-				
+		log.debug("List of fire station found : {}", listOfFireStation);	
 		return listOfFireStation;
 	}
 	
 	public List<Firestation> getAllFirestationByStationNumber(final int stationNumber) {
+		log.debug("Searching all fire stations by station's number : {} ...", stationNumber);
 		List<Firestation> listOfFireStation = new ArrayList<Firestation>();
 			for(Firestation stationFinder : getAllFirestations()) {
-				if(stationFinder.getStation().equals(stationNumber)) {
+				if(stationFinder.getStation() == stationNumber) {
 					listOfFireStation.add(stationFinder) ;
 				}
 		}
-				
+		log.debug("List of fire station found : {}", listOfFireStation);	
 		return listOfFireStation;
 	}
 	
 	public Firestation addFirestation(Firestation firestation) {
+		log.debug("Adding {} fire station...", firestation);
 		firestations.add(firestation);
+		log.debug("{} fire station added.", firestation);
 		return firestation;
 	}
 	
 	public Boolean deleteFirestation(final String address, final Integer station) {
-		if(firestations.removeIf(firestation -> firestation.getAddress().equals(address) & firestation.getStation().equals(station))) {
+		log.debug("Deleting fire station number {} from {} ...", station, address);
+		if(firestations.removeIf(firestation -> firestation.getAddress().equals(address) & firestation.getStation() == station)) {
+			log.debug("Fire station deleted !");
 			return true;
 		}
+		log.debug("Failed to delete fire station number {} from {} ...", station, address);
 		return false;
 	}
 		
 	//Constructor
 	public FirestationRepository() {
 		this.firestations = parseJsonFirestation();
-		log.info("\"Firestation\" repository created. (" + this.firestations.size() + " found)"); //Log that the repository as been created with how many persons.
+		log.info("\"Firestation\" repository created. {} found)", this.firestations.size()); //Log that the repository as been created with how many persons.
 	
 	}
 	

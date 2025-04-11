@@ -1,12 +1,11 @@
 package com.api.safetynet.model;
 
 import java.util.Objects;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@Getter @Setter
+@Data
+@NoArgsConstructor
 public class Person {
 	
 	//Attributes
@@ -17,11 +16,6 @@ public class Person {
 	private int zip;
 	private String phone;
 	private String email;
-		
-	
-	//Default constructor
-	public Person() {} 
-		
 
 	@Override
 	public boolean equals(Object obj) {
@@ -34,5 +28,10 @@ public class Person {
 		Person other = (Person) obj;
 		return Objects.equals(firstName, other.firstName) && Objects.equals(lastName, other.lastName);
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(firstName, lastName);
+	} 
 	
 }

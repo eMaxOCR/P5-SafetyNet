@@ -1,19 +1,13 @@
 package com.api.safetynet.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@Getter @Setter
+@NoArgsConstructor
 public class Allergies {
 	
 	//Attribute
 	private String allergyName;
 	
-	//Default constructor
-	public Allergies(){}
-
 }
