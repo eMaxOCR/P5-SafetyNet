@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.api.safetynet.model.Firestation;
+import com.api.safetynet.model.Person;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,9 +20,10 @@ public class FirestationRepository {
 	
 	private List<Firestation> firestations;
 	
+	ObjectMapper objectMapper = new ObjectMapper();//Create Jackon's object mapper
+	
 	private List<Firestation> parseJsonFirestation(){
 		log.debug("Loading JSON fire station.");
-		ObjectMapper objectMapper = new ObjectMapper();//Create Jackon's object mapper
 		
 		List<Firestation> firestationList = new ArrayList<Firestation>();
 		
@@ -35,6 +39,33 @@ public class FirestationRepository {
 		}
 		
 		return firestationList;
+	}
+	
+	public void addFirestationIntoJson(Firestation firestation) {
+		log.debug("Requesting to add : {} into  JSON", firestation);
+		
+		try {
+			File jsonData = new File("src/main/resources/data.json"); //Indicate where is the data.
+			JsonNode rootNode = objectMapper.readTree(jsonData); //Read all content of json data.
+			JsonNode firestationsNode = rootNode.get("firestations"); //Extract array "persons".
+			
+			ArrayNode firestationsArray = (ArrayNode) firestationsNode; 
+			
+			ObjectNode newFirestation = objectMapper.createObjectNode();
+			newFirestation.put("address", firestation.getAddress());
+			newFirestation.put("station", firestation.getStation());
+			
+			firestationsArray.add(newFirestation);
+			
+			objectMapper.writerWithDefaultPrettyPrinter().writeValue(jsonData, rootNode);
+			
+			log.debug("{} added into JSON", firestation);
+			
+		} catch (Exception e) {
+			log.debug(e.getMessage());
+			
+		}	
+		
 	}
 	
 	public List<Firestation> getAllFirestations(){
@@ -97,6 +128,7 @@ public class FirestationRepository {
 	public Firestation addFirestation(Firestation firestation) {
 		log.debug("Adding {} fire station...", firestation);
 		firestations.add(firestation);
+		addFirestationIntoJson(firestation);
 		log.debug("{} fire station added.", firestation);
 		return firestation;
 	}

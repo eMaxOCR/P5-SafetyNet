@@ -54,37 +54,8 @@ public class PersonService {
 	}
 	
 	public Person updatePerson(String firstName, String lastName, Person person) {
-		Person personToEdit = getOnePerson(firstName, lastName);//Take Person object that have to be updated.
-		
-		String address = person.getAddress();
-		if(address != null) {
-			personToEdit.setAddress(address);
-		}
-		
-		String city = person.getCity();
-		if(city != null) {
-			personToEdit.setCity(city);
-		}
-		
-		int zip = person.getZip();
-		if(zip != 0) {
-			personToEdit.setZip(zip);
-		}
-		
-		String phone = person.getPhone();
-		if(phone != null) {
-			personToEdit.setPhone(phone);
-		}
-		
-		String email = person.getEmail();
-		if(email != null) {
-			personToEdit.setEmail(email);
-		}
-		
-		//TODO Persister dans le fichier JSON. Elle fait appel à Person.repository.update(PersonToEdit)
-		
-		log.debug("Person {} {} updated.", personToEdit.getFirstName(), personToEdit.getLastName());
-		return personToEdit;
+
+		return personRepository.updatePerson(firstName, lastName, person);
 	}
 
 	public Boolean deletePerson(final String firstName, final String lastName) {

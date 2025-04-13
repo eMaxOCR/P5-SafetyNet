@@ -1,4 +1,4 @@
-package com.api.safetynet;
+package com.api.safetynet.controllerTest;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;

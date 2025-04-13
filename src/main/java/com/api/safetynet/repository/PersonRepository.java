@@ -2,6 +2,7 @@ package com.api.safetynet.repository;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,10 @@ import com.api.safetynet.model.Person;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -17,36 +22,39 @@ import lombok.extern.slf4j.Slf4j;
 public class PersonRepository {
 	
 	@Autowired
-	DataParsing dataParsing;
+	private DataParsing dataParsing;
 	
 	//Attribute
-	private List<Person> persons; //Initiate list
+	private List<Person> persons = new ArrayList<>(); //Initiate list
 	
 	//Constructor
-	public PersonRepository() {
-		this.persons = parseJsonPerson();//Call method at app's lunch.
-	}
-
+//	public PersonRepository() {
+//		this.persons = parseJsonPerson();//Initialize person list when application lunch.
+//	}
+	
+	//ObjectMapper objectMapper = new ObjectMapper();//Create Jackon's object mapper
+	
+	@PostConstruct
+	public void init() {
+       this.persons = parseJsonPerson();//Initialize person list after Spring has injected dependencies.
+       log.info("\"Person\" repository initialized. {} found)", this.persons.size());
+    }
+	
 	//Functions
-	private List<Person> parseJsonPerson(){ //Parse JSON 
-		log.debug("Loading JSON Person.");
-		ObjectMapper objectMapper = new ObjectMapper();//Create Jackon's object mapper
-		
-		List<Person> personList = new ArrayList<Person>();//Create list of person and put information into Java object.
-		
-		//TODO: Put in DataParsing.class
-		try {
-			File jsonData = new File("src/main/resources/data.json"); //Indicate where is the data to parse
-			JsonNode rootNode = objectMapper.readTree(jsonData); //Read all content of json data.
-			JsonNode personsNode = rootNode.get("persons"); //Extract array "persons".
-			
-			personList = objectMapper.readValue(personsNode.toString(), new TypeReference<List<Person>>() {});
-			
-		} catch (Exception e) {
-			log.debug(e.getMessage());
-		} 
-		
-		return personList;
+	private List<Person> parseJsonPerson(){ //Parse JSON 		
+		return dataParsing.parseJsonPerson();
+	}
+	
+	public void addPersonIntoJson(Person person) {
+		log.debug("Requesting to add : {} into  JSON", person);
+		dataParsing.addPersonIntoJson(person);
+		log.debug("{} added into  JSON", person);		
+	}
+	
+	public void deletePersonFromJson(Person person) {
+		log.debug("Requesting to delete : {} from JSON", person);
+		dataParsing.deletePersonFromJson(person);
+		log.debug("{} deleted from JSON", person);		
 	}
 	
 	public List<Person> findAllPersons(){
@@ -63,7 +71,7 @@ public class PersonRepository {
 			}
 		}
 		log.debug("Cannot find person. No informations found");
-		return null; //Return null if no person detected.
+		return null; 
 	}
 	
 	public List<Person> findAllPersonsByLastName(final String lastName){
@@ -93,18 +101,58 @@ public class PersonRepository {
 	public Person addPerson(final Person person) {
 		log.debug("Adding person : {} ...", person);
 		persons.add(person);
+		addPersonIntoJson(person);
 		log.debug("Person added");
-		//TODO Persister dans le fichier JSON. //Lecture = data.json, ecriture = databis.json le temps des tests.
+
 		return person;
+	}
+	
+	public Person updatePerson(String firstName, String lastName, Person person) {
+		Person personToEdit = getOnePerson(firstName, lastName);//Take Person object that have to be updated.
+		
+		if(personToEdit != null) {
+			String address = person.getAddress();
+			if(address != null) {
+				personToEdit.setAddress(address);
+			}
+			
+			String city = person.getCity();
+			if(city != null) {
+				personToEdit.setCity(city);
+			}
+			
+			int zip = person.getZip();
+			if(zip != 0) {
+				personToEdit.setZip(zip);
+			}
+			
+			String phone = person.getPhone();
+			if(phone != null) {
+				personToEdit.setPhone(phone);
+			}
+			
+			String email = person.getEmail();
+			if(email != null) {
+				personToEdit.setEmail(email);
+			}
+			
+			//update from database
+			deletePersonFromJson(personToEdit);
+			addPersonIntoJson(person);
+			
+			log.debug("Person {} {} updated.", personToEdit.getFirstName(), personToEdit.getLastName());
+			return personToEdit;
+		}
+		return null;
 	}
 	
 	public Boolean deletePerson(final String firstName, final String lastName) {
 		log.debug("Deleting person : {} {}");
+		deletePersonFromJson(getOnePerson(firstName, lastName));
 		if(persons.removeIf(person -> person.getFirstName().equals(firstName) & person.getLastName().equals(lastName))) {
 			return true;
 		}
 		log.debug("Failed to delete person {} {}, not found", firstName, lastName);
-		//TODO Persister dans le fichier JSON.
 		return false;
 		
 	}	
