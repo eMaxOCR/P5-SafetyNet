@@ -45,23 +45,6 @@ public class PersonRepository {
 		return dataParsing.parseJsonPerson();
 	}
 	
-	public void addPersonIntoJson(Person person) {
-		log.debug("Requesting to add : {} into  JSON", person);
-		dataParsing.addPersonIntoJson(person);
-		log.debug("{} added into  JSON", person);		
-	}
-	
-	public void deletePersonFromJson(Person person) {
-		log.debug("Requesting to delete : {} from JSON", person);
-		dataParsing.deletePersonFromJson(person);
-		log.debug("{} deleted from JSON", person);		
-	}
-	
-	public List<Person> findAllPersons(){
-		log.debug("List of all person : {} ", persons);
-		return persons;	
-	}
-	
 	public Person getOnePerson(final String firstName, final String lastName){
 		log.debug("Searching person : {} {} ..." , firstName, lastName);
 		for(Person personFinder : persons) {
@@ -72,6 +55,11 @@ public class PersonRepository {
 		}
 		log.debug("Cannot find person. No informations found");
 		return null; 
+	}
+	
+	public List<Person> findAllPersons(){
+		log.debug("List of all person : {} ", persons);
+		return persons;	
 	}
 	
 	public List<Person> findAllPersonsByLastName(final String lastName){
@@ -96,6 +84,19 @@ public class PersonRepository {
 		}
 		log.debug("Liste of person found : {}", peronsFromSameAddress);
 		return peronsFromSameAddress;
+	}
+	
+	
+	public void addPersonIntoJson(Person person) {
+		log.debug("Requesting to add : {} into  JSON", person);
+		dataParsing.addPersonIntoJson(person);
+		log.debug("{} added into  JSON", person);		
+	}
+	
+	public void deletePersonFromJson(Person person) {
+		log.debug("Requesting to delete : {} from JSON", person);
+		dataParsing.deletePersonFromJson(person);
+		log.debug("{} deleted from JSON", person);		
 	}
 	
 	public Person addPerson(final Person person) {
