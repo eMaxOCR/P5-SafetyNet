@@ -1,17 +1,14 @@
 package com.api.safetynet.repository;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.api.safetynet.model.Person;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import jakarta.annotation.PostConstruct;
@@ -27,12 +24,7 @@ public class PersonRepository {
 	//Attribute
 	private List<Person> persons = new ArrayList<>(); //Initiate list
 	
-	//Constructor
-//	public PersonRepository() {
-//		this.persons = parseJsonPerson();//Initialize person list when application lunch.
-//	}
-	
-	//ObjectMapper objectMapper = new ObjectMapper();//Create Jackon's object mapper
+	ObjectMapper objectMapper = new ObjectMapper();
 	
 	@PostConstruct
 	public void init() {
@@ -89,14 +81,34 @@ public class PersonRepository {
 	
 	public void addPersonIntoJson(Person person) {
 		log.debug("Requesting to add : {} into  JSON", person);
-		dataParsing.addPersonIntoJson(person);
+		
+		String nodeName = "persons";
+		
+		ObjectNode personNode = objectMapper.createObjectNode();
+		personNode.put("firstName", person.getFirstName());
+		personNode.put("lastName", person.getLastName());
+		personNode.put("address", person.getAddress());
+		personNode.put("city", person.getCity());
+		personNode.put("phone", person.getPhone());
+		personNode.put("email", person.getEmail());
+		
+		dataParsing.addElementIntoJson(personNode, nodeName);
+		
 		log.debug("{} added into  JSON", person);		
 	}
 	
 	public void deletePersonFromJson(Person person) {
 		log.debug("Requesting to delete : {} from JSON", person);
-		dataParsing.deletePersonFromJson(person);
-		log.debug("{} deleted from JSON", person);		
+		
+		String nodeName = "persons";
+		
+		Map<String, String> id = new HashMap<>();
+		id.put("firstName", person.getFirstName());
+		id.put("lastName", person.getLastName());
+		
+		dataParsing.deleteElementFromJson(id, nodeName);
+		
+		log.debug("{} deleted from JSON", person);	
 	}
 	
 	public Person addPerson(final Person person) {
@@ -137,7 +149,7 @@ public class PersonRepository {
 				personToEdit.setEmail(email);
 			}
 			
-			//update from database
+			//update database
 			deletePersonFromJson(personToEdit);
 			addPersonIntoJson(person);
 			
@@ -149,9 +161,13 @@ public class PersonRepository {
 	
 	public Boolean deletePerson(final String firstName, final String lastName) {
 		log.debug("Deleting person : {} {}");
-		deletePersonFromJson(getOnePerson(firstName, lastName));
-		if(persons.removeIf(person -> person.getFirstName().equals(firstName) & person.getLastName().equals(lastName))) {
-			return true;
+		Person personToDelete = getOnePerson(firstName, lastName);
+		if(personToDelete != null) {
+			deletePersonFromJson(personToDelete);
+			if(persons.removeIf(person -> person.getFirstName().equals(firstName) & person.getLastName().equals(lastName))) {
+				log.debug("person deleted !");
+				return true;
+			}
 		}
 		log.debug("Failed to delete person {} {}, not found", firstName, lastName);
 		return false;

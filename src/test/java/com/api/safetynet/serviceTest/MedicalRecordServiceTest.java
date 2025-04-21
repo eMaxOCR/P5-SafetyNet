@@ -7,6 +7,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -104,43 +107,41 @@ public class MedicalRecordServiceTest {
 		// Arrange
         String firstNameToUpdate = "David";
         String lastNameToUpdate = "Plamon";
-        
+
         MedicalRecord existingRecord = new MedicalRecord();
         existingRecord.setFirstName(firstNameToUpdate);
         existingRecord.setLastName(lastNameToUpdate);
-        existingRecord.setBirthdate(new Date()); 
-        
+        existingRecord.setBirthdate(Date.from(LocalDate.of(2000, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
         List<Medication> medicationList1 = new ArrayList<>();
         Medication medication1 = new Medication();
         medication1.setMedicationName("Red Pills");
         medication1.setQuantityInMg("10mg");
         medicationList1.add(medication1);
         existingRecord.setMedications(medicationList1);
-        
+
         List<String> allergiesList1 = new ArrayList<>();
         allergiesList1.add("Pollen");
         existingRecord.setAllergies(allergiesList1);
-        
-        
-        //Next
+
         MedicalRecord updateDetails = new MedicalRecord();
         updateDetails.setFirstName(firstNameToUpdate);
         updateDetails.setLastName(lastNameToUpdate);
-        updateDetails.setBirthdate(new Date()); 
-        
+        updateDetails.setBirthdate(Date.from(LocalDate.of(2005, 5, 5).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
         List<Medication> medicationList2 = new ArrayList<>();
         Medication medication2 = new Medication();
         medication2.setMedicationName("Blue Pills");
         medication2.setQuantityInMg("100mg");
         medicationList2.add(medication2);
         updateDetails.setMedications(medicationList2);
-        
+
         List<String> allergiesList2 = new ArrayList<>();
         allergiesList2.add("Fish");
         updateDetails.setAllergies(allergiesList2);
 
-        when(mr.getOneMedicalRecord(firstNameToUpdate, lastNameToUpdate))
-                .thenReturn(existingRecord);
+        when(mr.updateMedicalRecord(firstNameToUpdate, lastNameToUpdate, updateDetails))
+                .thenReturn(updateDetails);
 
         // Act
         MedicalRecord result = ms.updateMedicalRecord(firstNameToUpdate, lastNameToUpdate, updateDetails);
@@ -152,7 +153,7 @@ public class MedicalRecordServiceTest {
         assertEquals(updateDetails.getBirthdate(), result.getBirthdate());
         assertEquals(updateDetails.getMedications(), result.getMedications());
         assertEquals(updateDetails.getAllergies(), result.getAllergies());
-        verify(mr, times(1)).getOneMedicalRecord(firstNameToUpdate, lastNameToUpdate);
+
 	}
 	
 	@Test
@@ -173,7 +174,7 @@ public class MedicalRecordServiceTest {
     }
 	
 	 @Test
-	    void testGetChildMedicalRecord_FoundChildren() {
+	    void testGetChildMedicalRecordTest() {
 	        // Arrange
 	        List<MedicalRecord> childRecords = new ArrayList<>();
 	        MedicalRecord child1 = new MedicalRecord();

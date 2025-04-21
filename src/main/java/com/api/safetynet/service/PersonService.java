@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.api.safetynet.model.Firestation;
 import com.api.safetynet.model.MedicalRecord;
@@ -77,7 +76,7 @@ public class PersonService {
 		return personRepository.getAllPersonsFromSameAddress(address);
 	}
 	
-	public Set<String> getPersonPhoneNumberByFirestation(int stationNumber){
+	public Set<String> getPersonPhoneNumberByFirestation(String stationNumber){
 		
 		//Attribute
 		List<Firestation> firestationByNumber = new ArrayList<>();
@@ -85,7 +84,7 @@ public class PersonService {
 		
 		//Only Take fire station by station's number. (We have addresses that we will compare to person's addresses)
 		for(Firestation fireStation : firestationService.getAllFirestation()) {
-			if(fireStation.getStation() == stationNumber) {
+			if(fireStation.getStation().equals(stationNumber)) {
 				firestationByNumber.add(fireStation);
 			}
 		}
@@ -224,7 +223,7 @@ public class PersonService {
 		
 	}
 	
-	public List<HouseNearFireStationDTO> getAllHousesServedByFireStationNumber (List<Integer> listOfStationNumber){
+	public List<HouseNearFireStationDTO> getAllHousesServedByFireStationNumber (List<String> listOfStationNumber){
 		
 		List<HouseNearFireStationDTO> listOfHouseServedbyStation = new ArrayList<>();//Main collector
 		
@@ -258,7 +257,7 @@ public class PersonService {
 		
 	}
 	
-	public GroupOfPersonServedByFireStationDTO getAllPersonServedByFireStationNumber (final int stationNumber){
+	public GroupOfPersonServedByFireStationDTO getAllPersonServedByFireStationNumber (final String stationNumber){
 		
 		GroupOfPersonServedByFireStationDTO groupOfPerson = new GroupOfPersonServedByFireStationDTO();
 		List<PersonServedByFireStationDTO> personDTOList = new ArrayList<PersonServedByFireStationDTO>();

@@ -20,20 +20,20 @@ public class FirestationService {
 		return firestationRepository.getAllFirestations();
 	}
 	
-	public Firestation getOneFirestationByAddressAndStationNumber(final String address, final Integer station){
+	public Firestation getOneFirestationByAddressAndStationNumber(final String address, final String station){
 		log.debug("Get one fire station");
 		return firestationRepository.getOneFirestationByAddressAndNumber(address, station);
 	}
 	
-	public int getFirestationNumberByAddress(final String address){
+	public String getFirestationNumberByAddress(final String address){
 		return firestationRepository.getFirestationNumberByAddress(address);
 	}
 	
-	public List<Firestation> getAllFirestationByStationNumberList(final List<Integer> listOfStationNumber){
+	public List<Firestation> getAllFirestationByStationNumberList(final List<String> listOfStationNumber){
 		return firestationRepository.getAllFirestationByStationNumberList(listOfStationNumber);
 	}
 	
-	public List<Firestation> getAllFirestationByStationNumber(final int stationNumber){
+	public List<Firestation> getAllFirestationByStationNumber(final String stationNumber){
 		return firestationRepository.getAllFirestationByStationNumber(stationNumber);
 	}
 	
@@ -42,18 +42,13 @@ public class FirestationService {
 		return addedFirestation;
 	}
 	
-	public Firestation updateFirestation (String address, Integer station, Firestation firestation) {
-		Firestation firestationToEdit = getOneFirestationByAddressAndStationNumber(address, station);
-		Integer stationVar = firestation.getStation();
-		if(stationVar != null) {
-			firestationToEdit.setStation(stationVar);
-		}
-		//TODO : SAVE MISSING VIA firestationService.
-		return firestationToEdit;
+	
+	public Firestation updateFirestation (String address, String station, Firestation firestation) {
+		return firestationRepository.updateFirestation(address, station, firestation);
 	}
 	
 	
-	public Boolean deleteFirestation(final String address, final Integer station) {
+	public Boolean deleteFirestation(final String address, final String station) {
 		return firestationRepository.deleteFirestation(address, station);
 	}
 	

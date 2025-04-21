@@ -196,7 +196,7 @@ public class MedicalRecordControllerTest {
 		fourthMedicalRecord.setAllergies(allergiesList3);
 		
 		//WHEN
-		when(ms.updateMedicalRecord(medicalRecord1.getFirstName(), medicalRecord1.getLastName(),fourthMedicalRecord )).thenReturn(fourthMedicalRecord);//TODO check
+		when(ms.updateMedicalRecord(medicalRecord1.getFirstName(), medicalRecord1.getLastName(),fourthMedicalRecord )).thenReturn(fourthMedicalRecord);
 		
 		//THEN
 		this.mockMvc.perform(put("/api/medicalrecord/"+medicalRecord1.getFirstName()+"/"+medicalRecord1.getLastName())

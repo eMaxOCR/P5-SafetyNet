@@ -9,6 +9,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -28,11 +30,15 @@ import com.api.safetynet.model.Firestation;
 import com.api.safetynet.model.MedicalRecord;
 import com.api.safetynet.model.Medication;
 import com.api.safetynet.model.Person;
+import com.api.safetynet.model.DTO.ChildInfoDTO;
+import com.api.safetynet.model.DTO.FamilyMemberDTO;
 import com.api.safetynet.model.DTO.GroupOfPersonNearFireStationDTO;
+import com.api.safetynet.model.DTO.GroupOfPersonServedByFireStationDTO;
 import com.api.safetynet.model.DTO.HouseNearFireStationDTO;
 import com.api.safetynet.model.DTO.PersonInfoDTO;
 import com.api.safetynet.model.DTO.PersonInfoWithMedicalRecordsDTO;
 import com.api.safetynet.model.DTO.PersonNearFireStationDTO;
+import com.api.safetynet.model.DTO.PersonServedByFireStationDTO;
 import com.api.safetynet.repository.FirestationRepository;
 import com.api.safetynet.repository.PersonRepository;
 import com.api.safetynet.service.FirestationService;
@@ -142,8 +148,71 @@ public class PersonServiceTest {
         assertEquals("d.plamon@google.com", result.getEmail());
     }
 	
-	//TODO Add
-	//TODO Update
+	@Test
+    void addPersonTest() {
+		Person personToAdd = new Person();
+        personToAdd.setFirstName("Joe");
+        personToAdd.setLastName("Screen");
+        personToAdd.setAddress("123 Soleil");
+        personToAdd.setCity("Bordeau");
+        personToAdd.setZip(12345);
+        personToAdd.setPhone("666-999-888");
+        personToAdd.setEmail("j.screen@gmail.com");
+        
+        when(pr.addPerson(any(Person.class))).thenReturn(personToAdd);
+
+        Person addedPerson = ps.addPerson(personToAdd);
+
+        assertNotNull(addedPerson);
+        assertEquals(personToAdd.getFirstName(), addedPerson.getFirstName());
+        assertEquals(personToAdd.getLastName(), addedPerson.getLastName());
+        assertEquals(personToAdd.getAddress(), addedPerson.getAddress());
+        assertEquals(personToAdd.getCity(), addedPerson.getCity());
+        assertEquals(personToAdd.getZip(), addedPerson.getZip());
+        assertEquals(personToAdd.getPhone(), addedPerson.getPhone());
+        assertEquals(personToAdd.getEmail(), addedPerson.getEmail());
+        verify(pr, times(1)).addPerson(personToAdd);
+    }
+
+	@Test
+    void updatePerson_Test() {
+		Person updatedPersonInfo = new Person();
+		updatedPersonInfo.setFirstName("Joe");
+		updatedPersonInfo.setLastName("Screen");
+		updatedPersonInfo.setAddress("123 Soleil");
+		updatedPersonInfo.setCity("Bordeau");
+		updatedPersonInfo.setZip(12345);
+		updatedPersonInfo.setPhone("666-999-888");
+		updatedPersonInfo.setEmail("j.screen@gmail.com");
+		
+		Person personToUpdate = new Person();
+		personToUpdate.setFirstName("Joe");
+		personToUpdate.setLastName("Screen");
+		personToUpdate.setAddress("123 Lune");
+		personToUpdate.setCity("Paris");
+		personToUpdate.setZip(75000);
+		personToUpdate.setPhone("11223344556677");
+		personToUpdate.setEmail("j.screen@yahoo.com");
+		
+	    String firstNameToUpdate = "Joe";
+	    String lastNameToUpdate = "Screen";
+	
+	    when(pr.updatePerson(firstNameToUpdate, lastNameToUpdate, personToUpdate))
+	            .thenReturn(personToUpdate);
+	
+	    Person updatedPerson = ps.updatePerson(firstNameToUpdate, lastNameToUpdate, personToUpdate);
+	
+	    assertNotNull(updatedPerson);
+	    assertEquals(personToUpdate.getFirstName(), updatedPerson.getFirstName());
+	    assertEquals(personToUpdate.getLastName(), updatedPerson.getLastName());
+	    assertEquals(personToUpdate.getAddress(), updatedPerson.getAddress());
+	    assertEquals(personToUpdate.getCity(), updatedPerson.getCity());
+	    assertEquals(personToUpdate.getZip(), updatedPerson.getZip());
+	    assertEquals(personToUpdate.getPhone(), updatedPerson.getPhone());
+	    assertEquals(personToUpdate.getEmail(), updatedPerson.getEmail());
+	    verify(pr, times(1))
+            .updatePerson(firstNameToUpdate, lastNameToUpdate, personToUpdate);
+    }
 	
 	@Test
     void deletePersonTest() {
@@ -166,7 +235,7 @@ public class PersonServiceTest {
     void calculatePersonAgeTest() throws ParseException, java.text.ParseException {
         // Arrange
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date birthDate = sdf.parse("1997-03-11"); // Born less than a year ago
+        Date birthDate = sdf.parse("1997-03-11"); 
 
         // Act
         int age = ps.calculatePersonAge(birthDate);
@@ -229,7 +298,7 @@ public class PersonServiceTest {
 
         List<Firestation> firestationsList = new ArrayList<>();
         Firestation firestation1 = new Firestation();
-        firestation1.setStation(1);
+        firestation1.setStation("1");
         firestation1.setAddress("36 avenue stylot");
         firestationsList.add(firestation1); 
 
@@ -245,7 +314,7 @@ public class PersonServiceTest {
         when(pr.findAllPersons()).thenReturn(persons);
 
         // Act
-        Set<String> result = ps.getPersonPhoneNumberByFirestation(1);
+        Set<String> result = ps.getPersonPhoneNumberByFirestation("1");
 
         // Assert
         assertEquals(2, result.size());
@@ -315,100 +384,159 @@ public class PersonServiceTest {
         assertTrue(personInfo.getAllergies().contains("peanuts"));
     }
 	 
-	//TODO getChildInformationsByAddressTest()
+	@Test
+    void getChildInformationsByAddressTest_singleChildWithAdultFamily() {
+		// Arrange
+	    String address = "123 Soleil";
+
+	    // Persons at the address
+	    Person child = new Person();
+	    child.setFirstName("Billy");
+	    child.setLastName("Kid");
+	    child.setAddress(address);
+	    child.setCity("Some City");
+	    child.setZip(12345);
+	    child.setPhone("111-222-3333");
+	    child.setEmail("billy.kid@example.com");
+
+	    Person adult1 = new Person();
+	    adult1.setFirstName("John");
+	    adult1.setLastName("Snow");
+	    adult1.setAddress(address);
+	    adult1.setCity("Some City");
+	    adult1.setZip(12345);
+	    adult1.setPhone("444-555-6666");
+	    adult1.setEmail("john.doe@example.com");
+
+	    Person adult2 = new Person();
+	    adult2.setFirstName("Jane");
+	    adult2.setLastName("Dark");
+	    adult2.setAddress(address);
+	    adult2.setCity("Some City");
+	    adult2.setZip(12345);
+	    adult2.setPhone("777-888-9999");
+	    adult2.setEmail("jane.doe@example.com");
+
+	    List<Person> persons = List.of(child, adult1, adult2);
+
+	    // Medical Records
+	    MedicalRecord childRecord = new MedicalRecord();
+	    childRecord.setFirstName("Billy");
+	    childRecord.setLastName("Kid");
+	    childRecord.setBirthdate(Date.from(LocalDate.of(2010, 5, 10).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+	    childRecord.setMedications(new ArrayList<>());
+	    childRecord.setAllergies(new ArrayList<>());
+
+	    MedicalRecord adult1Record = new MedicalRecord();
+	    adult1Record.setFirstName("John");
+	    adult1Record.setLastName("Snow");
+	    adult1Record.setBirthdate(Date.from(LocalDate.of(1980, 1, 15).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+	    adult1Record.setMedications(new ArrayList<>());
+	    adult1Record.setAllergies(new ArrayList<>());
+
+	    MedicalRecord adult2Record = new MedicalRecord();
+	    adult2Record.setFirstName("Jane");
+	    adult2Record.setLastName("Dark");
+	    adult2Record.setBirthdate(Date.from(LocalDate.of(1985, 8, 22).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+	    adult2Record.setMedications(new ArrayList<>());
+	    adult2Record.setAllergies(new ArrayList<>());
+
+	    when(pr.getAllPersonsFromSameAddress(address)).thenReturn(persons);
+	    when(ms.getOneMedicalRecord("Billy", "Kid")).thenReturn(childRecord);
+	    when(ms.getOneMedicalRecord("John", "Snow")).thenReturn(adult1Record);
+	    when(ms.getOneMedicalRecord("Jane", "Dark")).thenReturn(adult2Record);
+
+	    // Act
+	    List<ChildInfoDTO> result = ps.getChildInformationsByAddress(address);
+
+	    // Assert
+	    assertEquals(1, result.size());
+	    ChildInfoDTO childInfo = result.get(0);
+	    assertEquals("Billy", childInfo.getFirstName());
+	    assertEquals("Kid", childInfo.getLastName());
+	    assertEquals(15, childInfo.getAge()); 
+	    assertEquals(2, childInfo.getFamilyMember().size());
+
+	    boolean johnFound = false;
+	    boolean janeFound = false;
+	    for (FamilyMemberDTO member : childInfo.getFamilyMember()) {
+	        if (member.getFirstName().equals("John") && member.getLastName().equals("Snow") && member.getAge() == 45) { 
+	            johnFound = true;
+	        } else if (member.getFirstName().equals("Jane") && member.getLastName().equals("Dark") && member.getAge() == 40) { 
+	            janeFound = true;
+	        }
+	    }
+	    assertTrue(johnFound);
+	    assertTrue(janeFound);
+    }
 	
 	@Test
     void getPersonsAndFireStationNumberByAddressTest() throws Exception {
-        // Arrange
+		// Arrange
         String address = "456 Elm St";
-        List<Person> persons = new ArrayList<>();
+        List<Person> personsAtAddress = new ArrayList<>();
 
         Person person1 = new Person();
         person1.setFirstName("John");
         person1.setLastName("Doe");
         person1.setAddress(address);
         person1.setPhone("111-222-3333");
+        personsAtAddress.add(person1);
 
         Person person2 = new Person();
         person2.setFirstName("Jane");
         person2.setLastName("Doe");
         person2.setAddress(address);
         person2.setPhone("444-555-6666");
+        personsAtAddress.add(person2);
 
-        persons.add(person1);
-        persons.add(person2);
+        MedicalRecord medicalRecord1 = new MedicalRecord();
+        medicalRecord1.setFirstName("John");
+        medicalRecord1.setLastName("Doe");
+        medicalRecord1.setBirthdate(Date.from(LocalDate.of(2000, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        MedicalRecord mr1 = new MedicalRecord();
-        mr1.setFirstName("John");
-        mr1.setLastName("Doe");
-        mr1.setBirthdate(new Date());
-        
-        List<Medication> medicationList = new ArrayList<>();
-        Medication medication = new Medication();
-        medication.setMedicationName("aspirin");
-        medication.setQuantityInMg("10mg");
-        medicationList.add(medication);
-        mr1.setMedications(medicationList);
-        
-        List<String> allergiesList = new ArrayList<>();
-        allergiesList.add("peanuts");
-        mr1.setAllergies(allergiesList);
 
-        MedicalRecord mr2 = new MedicalRecord();
-        mr2.setFirstName("Jane");
-        mr2.setLastName("Doe");
-        mr2.setBirthdate(new Date()); 
-        
-        List<Medication> medicationList2 = new ArrayList<>();
-        Medication medication2 = new Medication();
-        medication2.setMedicationName("paracetamol");
-        medication2.setQuantityInMg("10mg");
-        medicationList2.add(medication2);
-        mr2.setMedications(medicationList2);
-        
-        List<String> allergiesList2 = new ArrayList<>();
-        allergiesList2.add("cats");
-        mr2.setAllergies(allergiesList2);
+        MedicalRecord medicalRecord2 = new MedicalRecord();
+        medicalRecord2.setFirstName("Jane");
+        medicalRecord2.setLastName("Doe");
+        medicalRecord2.setBirthdate(Date.from(LocalDate.of(2010, 6, 15).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        when(pr.getAllPersonsFromSameAddress(address)).thenReturn(persons);
-        when(ms.getOneMedicalRecord("John", "Doe")).thenReturn(mr1);
-        when(ms.getOneMedicalRecord("Jane", "Doe")).thenReturn(mr2);
 
-        when(fs.getFirestationNumberByAddress(address)).thenReturn(2);
+        when(pr.getAllPersonsFromSameAddress(address)).thenReturn(personsAtAddress);
+        when(ms.getOneMedicalRecord("John", "Doe")).thenReturn(medicalRecord1);
+        when(ms.getOneMedicalRecord("Jane", "Doe")).thenReturn(medicalRecord2);
+        when(fs.getFirestationNumberByAddress(address)).thenReturn("3");
 
         // Act
         GroupOfPersonNearFireStationDTO result = ps.getPersonsAndFireStationNumberByAddress(address);
 
         // Assert
-        assertNotNull(result);
+        assertEquals("3", result.getFiresStation());
         assertEquals(2, result.getResidents().size());
-        assertEquals(2, result.getFiresStation());
 
         PersonNearFireStationDTO resident1 = result.getResidents().get(0);
         assertEquals("Doe", resident1.getLastName());
+        assertEquals(25, resident1.getAge());
         assertEquals("111-222-3333", resident1.getPhoneNumber());
-        assertEquals(List.of("aspirin"), resident1.getMedications().stream().map(Medication::getMedicationName).collect(Collectors.toList()));
-        assertEquals(List.of("peanuts"), resident1.getAllergies());
 
         PersonNearFireStationDTO resident2 = result.getResidents().get(1);
         assertEquals("Doe", resident2.getLastName());
+        assertEquals(15, resident2.getAge());
         assertEquals("444-555-6666", resident2.getPhoneNumber());
-        assertEquals(List.of("paracetamol"), resident2.getMedications().stream().map(Medication::getMedicationName).collect(Collectors.toList()));
-        assertEquals(List.of("cats"), resident2.getAllergies());
-    }
+	}
 	
 	@Test
-    void getAllHousesServedByFireStationNumberTest() throws Exception { //TODO Verify
+    void getAllHousesServedByFireStationNumberTest() throws Exception { 
 		// Arrange
-        List<Integer> stationNumbers = List.of(1, 2);
+        List<String> stationNumbers = List.of("1", "2");
 
         // Firestations serving 123 Main St
         Firestation fs1 = new Firestation();
-        fs1.setStation(1);
+        fs1.setStation("1");
         fs1.setAddress("123 Main St");
 
         Firestation fs2 = new Firestation();
-        fs2.setStation(2);
+        fs2.setStation("2");
         fs2.setAddress("123 Main St");
 
         when(fs.getAllFirestationByStationNumberList(stationNumbers)).thenReturn(List.of(fs1, fs2));
@@ -451,81 +579,104 @@ public class PersonServiceTest {
         assertEquals(List.of("paracetamol"), resident1.getMedications().stream().map(Medication::getMedicationName).collect(Collectors.toList()));
         assertEquals(List.of("peanuts"), resident1.getAllergies());
 	}
-//	@Test
-//	void getAllPersonServedByFireStationNumberTest() throws Exception { //TODO Verify
-//        // Arrange
-//        int stationNumber = 1;
-//
-//        // Firestations serving addresses
-//        Firestation fs1 = new Firestation();
-//        fs1.setStation(1);
-//        fs1.setAddress("123 Main St");
-//
-//        Firestation fs2 = new Firestation();
-//        fs2.setStation(1);
-//        fs2.setAddress("456 Oak Ave");
-//
-//        when(fs.getAllFirestationByStationNumber(stationNumber)).thenReturn(List.of(fs1, fs2));
-//
-//        // Persons at 123 Main St
-//        Person p1 = new Person();
-//        p1.setFirstName("John");
-//        p1.setLastName("Doe");
-//        p1.setAddress("123 Main St");
-//        p1.setPhone("111-222-3333");
-//
-//        MedicalRecord mr1 = new MedicalRecord();
-//        mr1.setFirstName("John");
-//        mr1.setLastName("Doe");
-//        mr1.setBirthdate(new Date());
-//       // mr1.setMedications(List.of(new Medication("paracetamol", "10mg")));
-//        mr1.setAllergies(List.of("peanuts"));
-//
-//        // Persons at 456 Oak Ave
-//        Person p2 = new Person();
-//        p2.setFirstName("Jane");
-//        p2.setLastName("Smith");
-//        p2.setAddress("456 Oak Ave");
-//        p2.setPhone("444-555-6666");
-//
-//        MedicalRecord mr2 = new MedicalRecord();
-//        mr2.setFirstName("Jane");
-//        mr2.setLastName("Smith");
-//        mr2.setBirthdate(new Date());
-//       // mr2.setMedications(List.of(new Medication("aspirin", "500mg")));
-//        mr2.setAllergies(List.of("none"));
-//
-//        when(pr.getAllPersonsFromSameAddress("123 Main St")).thenReturn(List.of(p1));
-//        when(pr.getAllPersonsFromSameAddress("456 Oak Ave")).thenReturn(List.of(p2));
-//        when(ms.getOneMedicalRecord("John", "Doe")).thenReturn(mr1);
-//        when(ms.getOneMedicalRecord("Jane", "Smith")).thenReturn(mr2);
-//
-//        // Act
-//        List<PersonInfoWithMedicalRecordsDTO> result = ps.getAllPersonServedByFireStationNumber(stationNumber);
-//
-//        // Assert
-//        assertNotNull(result);
-//        assertEquals(2, result.size());
-//
-//        PersonInfoWithMedicalRecordsDTO person1 = result.stream()
-//                .filter(p -> p.getFirstName().equals("John") && p.getLastName().equals("Doe"))
-//                .findFirst()
-//                .orElse(null);
-//        assertNotNull(person1);
-//        assertEquals("Doe", person1.getLastName());
-//        assertEquals("111-222-3333", person1.getPhoneNumber());
-//        assertEquals(List.of("paracetamol"), person1.getMedications().stream().map(Medication::getMedicationName).collect(Collectors.toList()));
-//        assertEquals(List.of("peanuts"), person1.getAllergies());
-//
-//        PersonInfoWithMedicalRecordsDTO person2 = result.stream()
-//                .filter(p -> p.getFirstName().equals("Jane") && p.getLastName().equals("Smith"))
-//                .findFirst()
-//                .orElse(null);
-//        assertNotNull(person2);
-//        assertEquals("Smith", person2.getLastName());
-//        assertEquals("444-555-6666", person2.getPhoneNumber());
-//        assertEquals(List.of("aspirin"), person2.getMedications().stream().map(Medication::getMedicationName).collect(Collectors.toList()));
-//        assertEquals(List.of("none"), person2.getAllergies());
-//	}
+	@Test
+	void getAllPersonServedByFireStationNumberTest() throws Exception { 
+		// Arrange
+        String stationNumber = "2";
+
+        // Firestations serving station number "2"
+        List<Firestation> firestations = new ArrayList<>();
+        Firestation fs1 = new Firestation();
+        fs1.setStation("2");
+        fs1.setAddress("742 Evergreen Terrace");
+        firestations.add(fs1);
+        Firestation fs2 = new Firestation();
+        fs2.setStation("2");
+        fs2.setAddress("123 Fake Street");
+        firestations.add(fs2);
+
+        // Persons living at the addresses served by station "2"
+        List<Person> persons1 = new ArrayList<>();
+        Person adult1 = new Person();
+        adult1.setFirstName("Homer");
+        adult1.setLastName("Simpson");
+        adult1.setAddress("742 Evergreen Terrace");
+        adult1.setPhone("555-1212");
+        persons1.add(adult1);
+        Person child1 = new Person();
+        child1.setFirstName("Bart");
+        child1.setLastName("Simpson");
+        child1.setAddress("742 Evergreen Terrace");
+        child1.setPhone("555-1212");
+        persons1.add(child1);
+
+        List<Person> persons2 = new ArrayList<>();
+        Person adult2 = new Person();
+        adult2.setFirstName("Ned");
+        adult2.setLastName("Flanders");
+        adult2.setAddress("123 Fake Street");
+        adult2.setPhone("555-1111");
+        persons2.add(adult2);
+
+        // Medical Records
+        MedicalRecord mrAdult1 = new MedicalRecord();
+        mrAdult1.setFirstName("Homer");
+        mrAdult1.setLastName("Simpson");
+        mrAdult1.setBirthdate(Date.from(LocalDate.of(1970, 5, 12).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        MedicalRecord mrChild1 = new MedicalRecord();
+        mrChild1.setFirstName("Bart");
+        mrChild1.setLastName("Simpson");
+        mrChild1.setBirthdate(Date.from(LocalDate.of(2010, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        MedicalRecord mrAdult2 = new MedicalRecord();
+        mrAdult2.setFirstName("Ned");
+        mrAdult2.setLastName("Flanders");
+        mrAdult2.setBirthdate(Date.from(LocalDate.of(1965, 9, 20).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+        when(fs.getAllFirestationByStationNumber(stationNumber)).thenReturn(firestations);
+        when(pr.getAllPersonsFromSameAddress("742 Evergreen Terrace")).thenReturn(persons1);
+        when(pr.getAllPersonsFromSameAddress("123 Fake Street")).thenReturn(persons2);
+        when(ms.getOneMedicalRecord("Homer", "Simpson")).thenReturn(mrAdult1);
+        when(ms.getOneMedicalRecord("Bart", "Simpson")).thenReturn(mrChild1);
+        when(ms.getOneMedicalRecord("Ned", "Flanders")).thenReturn(mrAdult2);
+
+        // Act
+        GroupOfPersonServedByFireStationDTO result = ps.getAllPersonServedByFireStationNumber(stationNumber);
+
+        // Assert
+        assertEquals(2, result.getAdultCount());
+        assertEquals(1, result.getChildCount());
+        assertEquals(3, result.getResidents().size());
+
+        List<PersonServedByFireStationDTO> residents = result.getResidents();
+        boolean homerFound = false;
+        boolean bartFound = false;
+        boolean nedFound = false;
+
+        for (PersonServedByFireStationDTO resident : residents) {
+            if (resident.getFirstName().equals("Homer")) {
+                assertEquals("Simpson", resident.getLastName());
+                assertEquals("555-1212", resident.getPhoneNumber());
+                assertEquals(55, resident.getAge()); 
+                assertEquals("742 Evergreen Terrace", resident.getAddress());
+                homerFound = true;
+            } else if (resident.getFirstName().equals("Bart")) {
+                assertEquals("Simpson", resident.getLastName());
+                assertEquals("555-1212", resident.getPhoneNumber());
+                assertEquals(15, resident.getAge());
+                assertEquals("742 Evergreen Terrace", resident.getAddress());
+                bartFound = true;
+            } else if (resident.getFirstName().equals("Ned")) {
+                assertEquals("Flanders", resident.getLastName());
+                assertEquals("555-1111", resident.getPhoneNumber());
+                assertEquals(60, resident.getAge());
+                assertEquals("123 Fake Street", resident.getAddress());
+                nedFound = true;
+            }
+        }
+
+        assertTrue(homerFound);
+        assertTrue(bartFound);
+        assertTrue(nedFound);
+    }
 
 }

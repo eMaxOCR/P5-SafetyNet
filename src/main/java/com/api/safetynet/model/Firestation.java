@@ -9,6 +9,6 @@ public class Firestation {
 	
 	//Attributes
 	private String address;
-	private int station;
+	private String station;
 	
 }

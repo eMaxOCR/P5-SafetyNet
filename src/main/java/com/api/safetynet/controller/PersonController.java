@@ -103,9 +103,10 @@ public class PersonController {
 		if(!hasBeenDeleted) {
 			log.error("Person {} {} cannot be found.", firstName, lastName);
 			return ResponseEntity.notFound().build();
-		}
+		}else {
 		log.info("Person {} {} deleted.", firstName, lastName);
 		return ResponseEntity.noContent().build();
+		}
 	}
 	
 }

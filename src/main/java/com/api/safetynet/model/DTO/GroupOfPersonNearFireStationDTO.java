@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 public class GroupOfPersonNearFireStationDTO {
 	
 	//Attributes
-	private int firesStation;
+	private String firesStation;
 	private List<PersonNearFireStationDTO> residents;
 }

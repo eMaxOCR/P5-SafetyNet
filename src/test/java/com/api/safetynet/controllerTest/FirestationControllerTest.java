@@ -45,11 +45,11 @@ public class FirestationControllerTest {
 	public void setUpFireStation() {
 		//Put temporary information for first fire station
 		firestation1.setAddress("123 rue table");
-		firestation1.setStation(1);
+		firestation1.setStation("1");
 			
 		//Put temporary information for first fire station
 		firestation2.setAddress("456 rue chaise");
-		firestation2.setStation(2);
+		firestation2.setStation("2");
 	}
 	
 	@Test	
@@ -98,7 +98,7 @@ public class FirestationControllerTest {
 		
 		//THEN
 		this.mockMvc.perform(get("/api/firestation/"+firestation1.getAddress()+"/"+ firestation1.getStation()).accept(MediaType.APPLICATION_JSON))
-		.andExpect(status().isNotFound()); //TODO Why cant enter in if(result == null) ? The "thenReturn(null)" put null...
+		.andExpect(status().isNotFound()); 
 		
 	}
 	
@@ -107,7 +107,7 @@ public class FirestationControllerTest {
 		//GIVEN
 		Firestation thirdFireStation = new Firestation();
 		thirdFireStation.setAddress("188 Rue National");
-		thirdFireStation.setStation(3);
+		thirdFireStation.setStation("3");
 		
 		//WHEN
 		when(fs.addFirestation(any(Firestation.class))).thenReturn(thirdFireStation);
@@ -129,10 +129,10 @@ public class FirestationControllerTest {
 		//GIVEN
 		Firestation newFirestationInformation = new Firestation();
 		newFirestationInformation.setAddress("123 rue table");
-		newFirestationInformation.setStation(4);
+		newFirestationInformation.setStation("4");
 		
 		//WHEN
-		when(fs.updateFirestation(firestation1.getAddress(), firestation1.getStation(), newFirestationInformation)).thenReturn(newFirestationInformation);//TODO check
+		when(fs.updateFirestation(firestation1.getAddress(), firestation1.getStation(), newFirestationInformation)).thenReturn(newFirestationInformation);
 		
 		//THEN
 		this.mockMvc.perform(put("/api/firestation/"+firestation1.getAddress()+"/"+firestation1.getStation())

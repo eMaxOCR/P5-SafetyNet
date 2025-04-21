@@ -29,7 +29,7 @@ public class SafetyController {
 	 * @param fire station number
 	 */
 	@GetMapping("/phonealert")
-	public ResponseEntity<Set<String>> getPersonPhoneNumberByFirestation(@RequestParam("firestation") int stationNumber){
+	public ResponseEntity<Set<String>> getPersonPhoneNumberByFirestation(@RequestParam("firestation") String stationNumber){
 		Set<String> result = personService.getPersonPhoneNumberByFirestation(stationNumber);
 		if(result.isEmpty()) {
 			log.error("No station found. Number {} invalid.", stationNumber);
@@ -107,7 +107,7 @@ public class SafetyController {
 	 * @param List of station number (eg : /stations?2,4)
 	 */
 	@GetMapping("flood/stations")
-	public ResponseEntity<List<HouseNearFireStationDTO>> getAllHousesServedByFireStationNumber(@RequestParam("stations") List<Integer> listOfStationNumber){
+	public ResponseEntity<List<HouseNearFireStationDTO>> getAllHousesServedByFireStationNumber(@RequestParam("stations") List<String> listOfStationNumber){
 		List<HouseNearFireStationDTO> result = personService.getAllHousesServedByFireStationNumber(listOfStationNumber);
 		if(result.isEmpty()) {
 			log.error("No house found. List of station number {} invalid.", listOfStationNumber);
@@ -122,7 +122,7 @@ public class SafetyController {
 	 * @param Station number (eg: 1)
 	 */
 	@GetMapping("/firestation")
-	public ResponseEntity<GroupOfPersonServedByFireStationDTO> getAllPersonServedByFireStationNumber(@RequestParam("stationNumber") int stationNumber){
+	public ResponseEntity<GroupOfPersonServedByFireStationDTO> getAllPersonServedByFireStationNumber(@RequestParam("stationNumber") String stationNumber){
 		
 		GroupOfPersonServedByFireStationDTO result = personService.getAllPersonServedByFireStationNumber(stationNumber);
 		

@@ -1,7 +1,5 @@
 package com.api.safetynet.controllerTest;
 
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -52,7 +50,7 @@ public class SafetyControllerTest {
 		listOffPhoneNumber.add("0655441122"); 
 		
 		//WHEN
-		when(ps.getPersonPhoneNumberByFirestation(anyInt())).thenReturn(listOffPhoneNumber); //When we use getAllFirestation() method, it should return a list of fire station.
+		when(ps.getPersonPhoneNumberByFirestation(anyString())).thenReturn(listOffPhoneNumber); //When we use getAllFirestation() method, it should return a list of fire station.
 		
 		//THEN
 		this.mockMvc.perform(get("/phonealert")
@@ -69,7 +67,7 @@ public class SafetyControllerTest {
 		Set<String> listOffPhoneNumber = new HashSet<>(); 
 		
 		//WHEN
-		when(ps.getPersonPhoneNumberByFirestation(anyInt())).thenReturn(listOffPhoneNumber); //When we use getAllFirestation() method, it should return a list of fire station.
+		when(ps.getPersonPhoneNumberByFirestation(anyString())).thenReturn(listOffPhoneNumber); //When we use getAllFirestation() method, it should return a list of fire station.
 		
 		//THEN
 		this.mockMvc.perform(get("/phonealert")
@@ -299,7 +297,7 @@ public class SafetyControllerTest {
 		listOfPersonNearStation.add(person2);
 		
 		//Set informations to groupeOfResident
-		groupeOfResident.setFiresStation(3);
+		groupeOfResident.setFiresStation("3");
 		groupeOfResident.setResidents(listOfPersonNearStation);
 		
 		//WHEN
@@ -380,9 +378,9 @@ public class SafetyControllerTest {
 			listHouseNearFireStation.add(houseNearFireStation2);
 			
 		//WHEN
-		List<Integer> stationNumbers = new ArrayList<>();
-		stationNumbers.add(1);
-		stationNumbers.add(2);
+		List<String> stationNumbers = new ArrayList<>();
+		stationNumbers.add("1");
+		stationNumbers.add("2");
 		when(ps.getAllHousesServedByFireStationNumber(stationNumbers)).thenReturn(listHouseNearFireStation);
 		
 		//THEN
@@ -408,9 +406,9 @@ public class SafetyControllerTest {
 		List<HouseNearFireStationDTO> listHouseNearFireStation = new ArrayList<>();
 		
 		//WHEN
-		List<Integer> stationNumbers = new ArrayList<>();
-		stationNumbers.add(1);
-		stationNumbers.add(2);
+		List<String> stationNumbers = new ArrayList<>();
+		stationNumbers.add("1");
+		stationNumbers.add("2");
 		when(ps.getAllHousesServedByFireStationNumber(stationNumbers)).thenReturn(listHouseNearFireStation);
 		
 		//THEN
@@ -419,8 +417,6 @@ public class SafetyControllerTest {
 				.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isNotFound());
 	}
-	
-	//faire un test avec springboottest.
 	
 	/*/firestation*/
 	@Test	
@@ -448,7 +444,7 @@ public class SafetyControllerTest {
 		groupfPerson.setResidents(listPersonServed);
 		
 		//WHEN
-		when(ps.getAllPersonServedByFireStationNumber(1)).thenReturn(groupfPerson);
+		when(ps.getAllPersonServedByFireStationNumber("1")).thenReturn(groupfPerson);
 		
 		//THEN
 		this.mockMvc.perform(get("/firestation")
@@ -480,7 +476,7 @@ public class SafetyControllerTest {
 		groupfPerson.setResidents(listPersonServed);
 		
 		//WHEN
-		when(ps.getAllPersonServedByFireStationNumber(1)).thenReturn(groupfPerson);
+		when(ps.getAllPersonServedByFireStationNumber("1")).thenReturn(groupfPerson);
 		
 		//THEN
 		this.mockMvc.perform(get("/firestation")

@@ -1,5 +1,6 @@
 package com.api.safetynet.controllerTest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -77,13 +78,14 @@ public class PersonControllerTest {
 				.accept(MediaType.APPLICATION_JSON))
 		//THEN
 			.andExpect(status().isOk())													//Check that response OK
-			.andExpect(jsonPath("$.[*].firstName").isNotEmpty())	//TODO Length ? (x2)
+			.andExpect(jsonPath("$.[*].firstName").isNotEmpty())	
 			.andExpect(jsonPath("$.[*].lastName").isNotEmpty())
 			.andExpect(jsonPath("$.[*].address").isNotEmpty())
 			.andExpect(jsonPath("$.[*].zip").isNotEmpty())
 			.andExpect(jsonPath("$.[*].city").isNotEmpty())
 			.andExpect(jsonPath("$.[*].phone").isNotEmpty())
 			.andExpect(jsonPath("$.[*].email").isNotEmpty());
+		assertEquals(2, listOfPersons.size());
 	}
 	
 	@Test
@@ -167,7 +169,7 @@ public class PersonControllerTest {
 		personUpdate.setEmail("d.plamon@wanadoo.com");
 		
 		//WHEN
-		when(ps.updatePerson(person.getFirstName(), person.getLastName(), personUpdate)).thenReturn(personUpdate);//TODO check
+		when(ps.updatePerson(person.getFirstName(), person.getLastName(), personUpdate)).thenReturn(personUpdate);
 		
 		//THEN
 		this.mockMvc.perform(put("/api/person/"+person.getFirstName().toString()+"/"+person.getLastName())

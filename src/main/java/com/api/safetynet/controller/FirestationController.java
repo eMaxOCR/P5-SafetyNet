@@ -42,7 +42,7 @@ public class FirestationController {
 	 * @return One fire station from json's data
 	 */
 	@GetMapping("/{address}/{station}") 
-	public ResponseEntity<Firestation> getOneFirestation(@PathVariable("address") final String address,@PathVariable("station") final Integer station){
+	public ResponseEntity<Firestation> getOneFirestation(@PathVariable("address") final String address,@PathVariable("station") final String station){
 		Firestation result = firestationService.getOneFirestationByAddressAndStationNumber(address, station);
 		if(result == null) {
 			log.error("No fire station found with the arguments: {} and {}. Element didn't exist.", address, station);
@@ -77,7 +77,7 @@ public class FirestationController {
 	 * @return fire station with updated informations.
 	 */
 	@PutMapping("/{address}/{station}")
-	public ResponseEntity<Firestation> updateFirestation(@PathVariable("address") final String address, @PathVariable("station") final int station, @RequestBody Firestation firestation) {
+	public ResponseEntity<Firestation> updateFirestation(@PathVariable("address") final String address, @PathVariable("station") final String station, @RequestBody Firestation firestation) {
 		Firestation firestationToEdit = firestationService.updateFirestation(address, station, firestation);
 		
 		if(firestationToEdit == null) {
@@ -94,11 +94,11 @@ public class FirestationController {
 	 * @param {address}/{station}
 	 */
 	@DeleteMapping("/{address}/{station}")
-	public ResponseEntity<Void> deleteFirestation(@PathVariable("address") final String address,@PathVariable("station") final Integer station) {
+	public ResponseEntity<Void> deleteFirestation(@PathVariable("address") final String address,@PathVariable("station") final String station) {
 		Boolean hasBeenDeleted = firestationService.deleteFirestation(address, station);
 		if(!hasBeenDeleted) {
 			log.error("Can't delete fire station with the arguments: {} {}. Element didn't exist", address,  station);
-			return ResponseEntity.notFound().build(); //TODO Check with mentor about code number
+			return ResponseEntity.notFound().build();
 		}
 		log.info("Fire station: {} {} deleted.", address,  station);
 		return ResponseEntity.noContent().build();
