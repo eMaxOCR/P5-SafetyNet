@@ -32,6 +32,11 @@ public class Person {
 	@Override
 	public int hashCode() {
 		return Objects.hash(firstName, lastName);
+	}
+
+	@Override
+	public String toString() {
+		return "Person [zip=" + zip + "]";
 	} 
 	
 }

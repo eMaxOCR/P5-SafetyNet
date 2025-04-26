@@ -32,11 +32,17 @@ public class FirestationRepository {
        log.info("\"Person\" repository initialized. {} found)", this.firestations.size());
     }
 		
-	//Functions
+	/**
+	* Automatically initiate list of fire station from JSON.
+	 * */
 	private List<Firestation> parseJsonFirestation(){ //Parse JSON 		
 		return dataParsing.parseJsonFirestation();
 	}
 	
+	/**
+	* Add an fire station into JSON.
+	* @param fire station
+	 * */
 	public void addFirestationIntoJson(Firestation firestation) {
 		log.debug("Requesting to add : {} into  JSON", firestation);
 		
@@ -52,6 +58,10 @@ public class FirestationRepository {
 		log.debug("{} added into  JSON", firestation);		
 	}
 	
+	/**
+	* Delete an fire station from JSON.
+	* @param firestation
+	 * */
 	public void deleteFirestationFromJson(Firestation firestation) {
 		log.debug("Requesting to delete : {} from JSON", firestation);
 		
@@ -65,16 +75,25 @@ public class FirestationRepository {
 		log.debug("{} deleted from JSON", firestation);		
 	}
 	
+	/**
+	* Get all fire stations.
+	* @return List of fire stations.
+	 * */
 	public List<Firestation> getAllFirestations(){
 		log.debug("List of all fire stations : {} " ,firestations);
 		return firestations;
 	}
 	
+	/**
+	* Find an fire station with an address and station's number.
+	* @param address, station
+	* @return fire station
+	 * */
 	public Firestation getOneFirestationByAddressAndNumber(final String address, final String station) {
 		log.debug("Searching fire station by address : {}, and station number : {} ..." , address, station);
 		for(Firestation stationFinder : firestations) {
 			if(stationFinder.getAddress().equals(address) & stationFinder.getStation().equals(station)) {
-				log.debug("Station found : " , stationFinder);
+				log.debug("Station found : {}" , stationFinder);
 				return stationFinder;
 			}
 		}
@@ -82,6 +101,11 @@ public class FirestationRepository {
 		return null; //Return null if no person detected.
 	}
 	
+	/**
+	* Find  fire station's number with address.
+	* @param address
+	* @return firestation's number
+	 * */
 	public String getFirestationNumberByAddress(final String address) {
 		log.debug("Searching fire station by address : {} ..." , address);
 		for(Firestation stationFinder : firestations) {
@@ -94,6 +118,11 @@ public class FirestationRepository {
 		return ""; //Return 0 if no station detected.
 	}
 	
+	/**
+	* Find all fire station's number that match from list of station's number.
+	* @param List of station's number
+	* @return List firestations
+	 * */
 	public List<Firestation> getAllFirestationByStationNumberList(final List<String> listOfStationNumber) {
 		List<Firestation> listOfFireStation = new ArrayList<Firestation>();
 		
@@ -110,6 +139,11 @@ public class FirestationRepository {
 		return listOfFireStation;
 	}
 	
+	/**
+	* Find all fire station that match one station's number.
+	* @param Station's number
+	* @return List firestations
+	 * */
 	public List<Firestation> getAllFirestationByStationNumber(final String stationNumber) {
 		log.debug("Searching all fire stations by station's number : {} ...", stationNumber);
 		List<Firestation> listOfFireStation = new ArrayList<Firestation>();
@@ -122,6 +156,11 @@ public class FirestationRepository {
 		return listOfFireStation;
 	}
 	
+	/**
+	* Add an fire station into JAVA object and into JSON.
+	* @param Fire station
+	* @return Fire station that has been created.
+	 * */
 	public Firestation addFirestation(Firestation firestation) {
 		log.debug("Adding {} fire station...", firestation);
 		firestations.add(firestation);
@@ -130,6 +169,12 @@ public class FirestationRepository {
 		return firestation;
 	}
 	
+	/**
+	* Update an fire station into JAVA object and into JSON.
+	* First name and last name didn't change.
+	* @param Address, station's number, new fire station with new informations.
+	* @return Fire station that has been created.
+	 * */
 	public Firestation updateFirestation (String address, String station, Firestation firestation) {
 		Firestation firestationToEdit = getOneFirestationByAddressAndNumber(address, station);
 		Firestation firestationToDelete = firestationToEdit;
@@ -156,6 +201,11 @@ public class FirestationRepository {
 		return null;
 	}
 	
+	/**
+	* Delete an fire station from JAVA object and from JSON.
+	* @param Address, station's number.
+	* @return True if deleted, False if no informations found.
+	 * */
 	public Boolean deleteFirestation(final String address, final String station) {
 		log.debug("Deleting fire station number {} from {} ...", address, station);
 		Firestation firestationToDelete = getOneFirestationByAddressAndNumber(address, station);

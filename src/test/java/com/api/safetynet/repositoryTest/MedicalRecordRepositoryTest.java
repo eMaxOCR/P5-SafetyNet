@@ -93,6 +93,12 @@ class MedicalRecordRepositoryTest {
         MedicalRecord foundRecord = medicalRecordRepository.getOneMedicalRecord("John", "Doe");
         assertEquals(medicalRecord1, foundRecord);
     }
+    
+    @Test
+    void getOneMedicalRecordFailedTest() {
+        MedicalRecord foundRecord = medicalRecordRepository.getOneMedicalRecord("No", "Body");
+        assertNull(foundRecord);
+    }
 
     @Test
     void getChildMedicalRecordTest() {
@@ -101,6 +107,12 @@ class MedicalRecordRepositoryTest {
         assertTrue(childrenRecords.contains(childMedicalRecord));
         assertFalse(childrenRecords.contains(medicalRecord1));
         assertFalse(childrenRecords.contains(medicalRecord2));
+    }
+    
+    @Test
+    void getChildMedicalRecordFailedTest() {
+        List<MedicalRecord> childrenRecords = null;
+        assertNull(childrenRecords);
     }
 
     @Test
@@ -153,6 +165,12 @@ class MedicalRecordRepositoryTest {
         assertEquals(2, medicalRecordRepository.getAllMedicalRecords().size());
         assertFalse(medicalRecordRepository.getAllMedicalRecords().contains(medicalRecord2));
         verify(dataParsing, times(1)).deleteElementFromJson(anyMap(), eq("medicalrecords"));
+    }
+    
+    @Test
+    void deleteMedicalRecordFailedTest() {
+        boolean deleted = medicalRecordRepository.deleteMedicalRecord("No", "Body");
+        assertFalse(deleted);
     }
 
 }

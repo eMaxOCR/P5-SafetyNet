@@ -61,6 +61,11 @@ public class PersonService {
 		return personRepository.deletePerson(firstName, lastName);
 	}
 	
+	/**
+	 * Calculate person's age with birth date
+	 * @param Date
+	 * @Return age 
+	 * */
 	public int calculatePersonAge(final Date birthDateVar) {
 		log.debug("Calculate age with birthdate {}.", birthDateVar);
 		Calendar birthDate = Calendar.getInstance();
@@ -76,6 +81,11 @@ public class PersonService {
 		return personRepository.getAllPersonsFromSameAddress(address);
 	}
 	
+	/**
+	 *Return a list of phone numbers of residents served by the fire station. 
+	 *Used to send emergency text messages to specific households.
+	 *@param station's number
+	 * */
 	public Set<String> getPersonPhoneNumberByFirestation(String stationNumber){
 		
 		//Attribute
@@ -101,6 +111,12 @@ public class PersonService {
 		return personPhoneWithoutDouble;
 	}
 	
+	
+	/**
+	 * Return the email addresses of all the residents in the city
+	 * @param City
+	 * @return List of email
+	 * */
 	public Set<String> getPersonEmailByCity(String cityToFind){
 		
 		//Attribute
@@ -117,6 +133,11 @@ public class PersonService {
 		return personEmail;
 	}
 	
+	/**
+	 * return the name, address, age, email address, and medical history (medications with dosage, and allergies) of each resident.
+	 * @param Last name
+	 * @return List of person
+	 * */
 	public List<PersonInfoDTO> getListOfPersonInformationByLastName(String lastNameToFind){
 		
 		//Attribute
@@ -144,6 +165,12 @@ public class PersonService {
 		return personsByLastNameList;
 	}
 	
+	/**
+	 * Return a list of children (any individual aged 18 or under) living at that address. 
+	 * The list include the first and last name of each child, their age, and a list of other household members. 
+	 * @param Address
+	 * @return List of children
+	 * */
 	public List<ChildInfoDTO>getChildInformationsByAddress(String addressToFind){
 		
 		List<ChildInfoDTO>childsList = new ArrayList<>();
@@ -192,6 +219,13 @@ public class PersonService {
 		
 	}
 
+	
+	/**
+	 * Return the list of residents living at the given address along with the number of the fire station serving it. 
+	 * The list include the name, phone number, age, and medical history (medications with dosage, and allergies) of each person.
+	 * @param address
+	 * @return Group of person near fire station.
+	 * */
 	public GroupOfPersonNearFireStationDTO getPersonsAndFireStationNumberByAddress (String address){
 		
 		GroupOfPersonNearFireStationDTO groupOfPerson = new GroupOfPersonNearFireStationDTO(); //Collect informations that will be return object that contain a list of Person and fire station number
@@ -223,6 +257,12 @@ public class PersonService {
 		
 	}
 	
+	/**
+	 * Return a list of all households served by the fire station. 
+	 * Grouped people by address it include the name, phone number, and age of the residents, and list their medical history (medications with dosage, and allergies) next to each name.
+	 * @return Return a list of all homes served by the fire station
+	 * @param List of station number (eg : /stations?2,4)
+	 */
 	public List<HouseNearFireStationDTO> getAllHousesServedByFireStationNumber (List<String> listOfStationNumber){
 		
 		List<HouseNearFireStationDTO> listOfHouseServedbyStation = new ArrayList<>();//Main collector
@@ -257,6 +297,14 @@ public class PersonService {
 		
 	}
 	
+	/**
+	 * Return a list of people covered by the corresponding fire station. 
+	 * So, if the station number = 1, it should return the 1  residents covered by station number 1. 
+	 * The list  include the following specific information: first name, last name, address, phone number. 
+	 * In addition, 2 provide a count of the number of adults and the number of children (any individual aged 18 or under) in the served area.
+	 * @return Return a list of all persons served by the fire station
+	 * @param Station number (eg: 1)
+	 */
 	public GroupOfPersonServedByFireStationDTO getAllPersonServedByFireStationNumber (final String stationNumber){
 		
 		GroupOfPersonServedByFireStationDTO groupOfPerson = new GroupOfPersonServedByFireStationDTO();

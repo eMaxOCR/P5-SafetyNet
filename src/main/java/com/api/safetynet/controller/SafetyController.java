@@ -25,6 +25,8 @@ public class SafetyController {
 		
 	
 	/**
+	 * Return a list of phone numbers of residents served by the fire station. 
+	 * Used to send emergency text messages to specific households.
 	 * @return List of phone numbers of residents served by fire station.
 	 * @param fire station number
 	 */
@@ -41,6 +43,7 @@ public class SafetyController {
 	
 	
 	/**
+	 * Return the email addresses of all the residents in the city.
 	 * @return Return list of mail of person from the city.
 	 * @param City (eg: Culver)
 	 */
@@ -57,6 +60,7 @@ public class SafetyController {
 	
 	
 	/**
+	 * Return the name, address, age, email address, and medical history (medications with dosage, and allergies) of each resident. 
 	 * @return All person's informations (Medications with posology and allergies)
 	 * @param Lastname (eg: Boyd)
 	 */
@@ -73,6 +77,8 @@ public class SafetyController {
 	
 	
 	/**
+	 * Return a list of children (any individual aged 18 or under) living at that address. 
+	 * The list include the first and last name of each child, their age, and a list of other household members. 
 	 * @return Return a list of children by address with an list of family member.
 	 * @param Address (eg: 947 E. Rose Dr)
 	 */
@@ -103,6 +109,8 @@ public class SafetyController {
 	}
 	
 	/**
+	 * Return a list of all households served by the fire station. 
+	 * Grouped people by address it include the name, phone number, and age of the residents, and list their medical history (medications with dosage, and allergies) next to each name.
 	 * @return Return a list of all homes served by the fire station
 	 * @param List of station number (eg : /stations?2,4)
 	 */
@@ -118,6 +126,10 @@ public class SafetyController {
 	}
 	
 	/**
+	 * Return a list of people covered by the corresponding fire station. 
+	 * So, if the station number = 1, it should return the 1  residents covered by station number 1. 
+	 * The list  include the following specific information: first name, last name, address, phone number. 
+	 * In addition, 2 provide a count of the number of adults and the number of children (any individual aged 18 or under) in the served area.
 	 * @return Return a list of all persons served by the fire station
 	 * @param Station number (eg: 1)
 	 */

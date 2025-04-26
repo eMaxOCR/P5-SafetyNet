@@ -12,7 +12,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,6 +80,12 @@ public class PersonRepositoryTest {
         assertNotNull(result);
         assertEquals("John", result.getFirstName());
         assertEquals("Doe", result.getLastName());
+    }
+    
+    @Test
+    void getOnePersonFailedTest() {
+        Person result = personRepository.getOnePerson("No", "Body");
+        assertNull(result);
     }
 
     @Test
@@ -144,11 +153,30 @@ public class PersonRepositoryTest {
     }
     
     @Test
+    void updatePersonFailedTest() {
+    	Person updatedPerson = new Person();
+        updatedPerson.setAddress("456 New Ave");
+        updatedPerson.setCity("New City");
+        updatedPerson.setZip(98765);
+        updatedPerson.setPhone("111-111-1111");
+        updatedPerson.setEmail("new.email@example.com");
+        Person result = personRepository.updatePerson("No", "Body", updatedPerson);
+        assertNull(result);
+        
+    }
+    
+    @Test
     void deletePersonTest() {
         assertTrue(personRepository.deletePerson("John", "Doe"));
         assertEquals(2, persons.size());
+        //assertFalse(persons.stream().anyMatch(p -> p.getFirstName().equals("John") && p.getLastName().equals("Doe")));
         assertFalse(persons.stream().anyMatch(p -> p.getFirstName().equals("John") && p.getLastName().equals("Doe")));
         verify(dataParsing, times(1)).deleteElementFromJson(anyMap(), eq("persons"));
+    }
+    
+    @Test
+    void deletePersonFailedTest() {
+        assertFalse(personRepository.deletePerson("No", "Body"));
     }
 
 }

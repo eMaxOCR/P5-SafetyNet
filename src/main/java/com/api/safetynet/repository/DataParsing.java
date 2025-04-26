@@ -24,13 +24,16 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 public class DataParsing { 
 	
-	ObjectMapper objectMapper = new ObjectMapper();//Create Jackon's object mapper
+	public ObjectMapper objectMapper = new ObjectMapper();//Create Jackon's object mapper
 	
 	protected File getJsonDataFile() {
         return new File("src/main/resources/data.json");
     }
 	
-	//Functions
+	/**
+	 * Parse JSON's data to get person's array
+	 * @return List of all person from JSON
+	 * */
 	public List<Person> parseJsonPerson(){ //Parse JSON 
 		log.debug("Loading JSON Person.");
 		//ObjectMapper objectMapper = new ObjectMapper();//Create Jackon's object mapper
@@ -45,13 +48,17 @@ public class DataParsing {
 			personList = objectMapper.readValue(personsNode.toString(), new TypeReference<List<Person>>() {});
 			
 		} catch (Exception e) {
-			log.debug(e.getMessage());
+			log.error(e.getMessage());
 			
 		} 
 		
 		return personList;
 	}
 	
+	/**
+	 * Parse JSON's data to get firestation's array
+	 * @return List of all fire stations from JSON
+	 * */
 	public List<Firestation> parseJsonFirestation(){
 		log.debug("Loading JSON fire station.");
 		
@@ -65,12 +72,16 @@ public class DataParsing {
 			firestationList = objectMapper.readValue(firestationNode.toString(), new TypeReference<List<Firestation>>() {});
 			
 		} catch (Exception e) {
-			log.debug(e.getMessage());
+			log.error(e.getMessage());
 		}
 		
 		return firestationList;
 	}
 	
+	/**
+	 * Parse JSON's data to get medical record's array
+	 * @return List of all medical records from JSON
+	 * */
 	public List<MedicalRecord> parseJsonMedicalRecord(){
 		ObjectMapper objectMapper = new ObjectMapper();//Create Jackon's object mapper
 		
@@ -84,14 +95,14 @@ public class DataParsing {
 			medicalRecordList = objectMapper.readValue(medicalRecordsNode.toString(), new TypeReference<List<MedicalRecord>>() {});
 			
 		} catch (Exception e) {
-			log.debug(e.getMessage());
+			log.error(e.getMessage());
 		} 
 		
 		return medicalRecordList;
 	}
 	
 	/**
-	* This function is used to add and element (person, firestation or medicalrecords) into JSON file.
+	* This function is used to add and element (person or firestation) into JSON file.
 	 * @param node (Content all data), nodeName (the node that have to be focus eg: persons, firestations...)
 	 * */
 	public void addElementIntoJson(ObjectNode node, String nodeName) {
@@ -111,14 +122,14 @@ public class DataParsing {
 			log.debug("{} added into JSON", nodeName);
 			
 		} catch (Exception e) {
-			log.debug(e.getMessage());
+			log.error(e.getMessage());
 			
 		} 		
 		
 	}
 	
 	/**
-	* This function is used to delete and element (person, firestation or medicalrecords) from JSON file.
+	* This function is used to delete and element (person, firestation) from JSON file.
 	 * @param ids (Content Map with key value eg: firstName, "David"), nodeName (the node that have to be focus eg: persons, firestations...)
 	 * */
 	public void deleteElementFromJson(Map<String, String> ids, String nodeName ) {
@@ -159,11 +170,16 @@ public class DataParsing {
 			log.debug("{} deleted from JSON", nodeName);
 			
 		} catch (Exception e) {
-			log.debug(e.getMessage());
+			log.error(e.getMessage());
 			
 		} 		
 		
 	}
+	
+	/**
+	* This function is used to add an medical record into JSON file.
+	 * @param medical record 
+	 * */
 	public void addMedicalRecordIntoJson(MedicalRecord medicalRecord) {
 		log.debug("Requesting to add : {} into  JSON", medicalRecord);
 		
@@ -210,7 +226,7 @@ public class DataParsing {
             log.debug("{} added into JSON", medicalRecord);
 			
 		} catch (Exception e) {
-			log.debug(e.getMessage());
+			log.error(e.getMessage());
 			
 		} 		
 		

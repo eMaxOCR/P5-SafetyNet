@@ -32,21 +32,32 @@ public class MedicalRecordRepository {
 		log.info("\"MedicalRecord\" repository created. {} found)", this.medicalRecords.size()); //Log that the repository as been created with how many persons.
 	}
 	
-	//Functions
+	/**
+	* Automatically initiate list of medical record from JSON.
+	 * */
 	private List<MedicalRecord> parseJsonMedicalRecord(){
 		return dataParsing.parseJsonMedicalRecord();
 	}
 	
+	/**
+	* Find all medical record from JSON.
+	* @return List of medical records.
+	 * */
 	public List<MedicalRecord> getAllMedicalRecords(){
-		log.debug("List of all medical records : {} ");
+		log.debug("List of all medical records : {} ", medicalRecords);
 		return medicalRecords;
 	}
 	
+	/**
+	* Find one medical record.
+	* @param first name, last name (String)
+	* @return One medical record.
+	 * */
 	public MedicalRecord getOneMedicalRecord(final String firstName, final String lastName){
 		log.debug("Searching for {} {}'s medical record.");
 		for(MedicalRecord medicalRecordFinder : medicalRecords) {
 			if(medicalRecordFinder.getFirstName().equals(firstName) & medicalRecordFinder.getLastName().equals(lastName)) {
-				log.debug("{} {}'s medical record found : {}", medicalRecordFinder);
+				log.debug("{} {}'s medical record found : {}", firstName, lastName, medicalRecordFinder);
 				return medicalRecordFinder;
 			}
 		}
@@ -54,6 +65,10 @@ public class MedicalRecordRepository {
 		return null; //Return null if no medicalRecord detected.
 	}
 	
+	/**
+	* Find all child's medical record.
+	* @return List of child's medical record.
+	 * */
 	public List<MedicalRecord> getChildMedicalRecord() {
 		log.debug("Searching for children's medical records.");
 		Calendar calendar = Calendar.getInstance(); //Create calendar
@@ -68,10 +83,15 @@ public class MedicalRecordRepository {
 				childMedicalRecord.add(medicalRecord);
 			}
 		}
-		log.debug("Liste of children's medical records found : ", childMedicalRecord);
+		log.debug("Liste of children's medical records found : {}", childMedicalRecord);
 		return childMedicalRecord;
 	}
-		
+	
+	/**
+	* Add an medical record into JAVA object and into JSON.
+	* @param Medical record
+	* @return Medical record that has been created.
+	 * */
 	public MedicalRecord addMedicalRecord(MedicalRecord medicalRecord) {
 		log.debug("Adding medical record : {}", medicalRecord);
 		medicalRecords.add(medicalRecord);
@@ -80,14 +100,24 @@ public class MedicalRecordRepository {
 		return medicalRecord;
 	}
 	
+	/**
+	* Add an medical record into JSON.
+	* @param Medical record
+	 * */
 	public void addMedicalRecordIntoJson(MedicalRecord medicalRecord) {
-		log.debug("Adding medical record : {} into JSON", medicalRecord);
+		log.debug("Adding medical record to JSON: {}", medicalRecord);
 		
 		dataParsing.addMedicalRecordIntoJson(medicalRecord);
 		
-		log.debug("Medical record added into JSON");
+		log.debug("Medical record added to JSON");
 	}
 	
+	/**
+	* Update an medical record into JAVA object and into JSON.
+	* First name and last name didn't change.
+	* @param First name, last name, new medical record with new informations.
+	* @return Fire station that has been created.
+	 * */
 	public MedicalRecord updateMedicalRecord (String firstName, String lastName, MedicalRecord medicalRecord) {
 		MedicalRecord medicalRecordToEdit = getOneMedicalRecord(firstName, lastName); //Take MedicalRecord object that have to be updated.
 		
@@ -112,6 +142,11 @@ public class MedicalRecordRepository {
 		return medicalRecordToEdit;
 	}
 	
+	/**
+	* Delete an medical record from JAVA object and from JSON.
+	* @param First name, last name.
+	* @return True if deleted, False if no informations found.
+	 * */
 	public Boolean deleteMedicalRecord(final String firstName, final String lastName) {
 		log.debug("Deleting : {} {}'s medical record...", firstName, lastName);
 		MedicalRecord medicalRecordToDelete = getOneMedicalRecord(firstName, lastName);
@@ -125,6 +160,11 @@ public class MedicalRecordRepository {
 		log.debug("Cannot delete {} {}'s medical record. Not found");
 		return false;
 	}
+	
+	/**
+	* Delete an medical record from JSON.
+	* @param medical record
+	 * */
 	public void deleteMedicalRecordFromJson(MedicalRecord merdicalRecord) {
 		log.debug("Requesting to delete : {} from JSON", merdicalRecord);
 		

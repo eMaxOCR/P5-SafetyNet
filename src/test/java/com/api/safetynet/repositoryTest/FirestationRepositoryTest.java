@@ -71,9 +71,21 @@ public class FirestationRepositoryTest {
 	}
 	
 	@Test
+	void getOneFirestationByAddressAndNumberFailedTest() {
+	    Firestation result = firestationRepository.getOneFirestationByAddressAndNumber("Nothing", "0");
+	    assertNull(result);
+	}
+	
+	@Test
 	void getFirestationNumberByAddressTest() {
 	    String result = firestationRepository.getFirestationNumberByAddress("123 Main St");
 	    assertEquals("2", result);
+	}
+	
+	@Test
+	void getFirestationNumberByAddressFailedTest() {
+	    String result = firestationRepository.getFirestationNumberByAddress("Nothing");
+	    assertEquals("", result);
 	}
 
 	@Test
@@ -130,11 +142,25 @@ public class FirestationRepositoryTest {
 	}
 	
 	@Test
+	void updateFirestationFailedTest() {
+	    Firestation updatedFirestation = new Firestation();
+	    updatedFirestation.setAddress("123 Main St");
+	    updatedFirestation.setStation("5");
+	    Firestation result = firestationRepository.updateFirestation("Nothing", "0", updatedFirestation);
+	    assertNull(result);
+	}
+	
+	@Test
 	void deleteFirestationTest() {
 	    assertTrue(firestationRepository.deleteFirestation("123 Main St", "2"));
 	    assertEquals(1, firestations.size());
 	    assertFalse(firestations.stream().anyMatch(fs -> fs.getAddress().equals("123 Main St") && fs.getStation().equals("2")));
 	    verify(dataParsing, times(1)).deleteElementFromJson(anyMap(), eq("firestations"));
+	}
+	
+	@Test
+	void deleteFirestationFailedTest() {
+	    assertFalse(firestationRepository.deleteFirestation("Nothing", "0"));
 	}
 	
 }

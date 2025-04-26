@@ -32,11 +32,18 @@ public class PersonRepository {
        log.info("\"Person\" repository initialized. {} found)", this.persons.size());
     }
 	
-	//Functions
+	/**
+	* Automatically initiate list of persons from JSON.
+	 * */
 	private List<Person> parseJsonPerson(){ //Parse JSON 		
 		return dataParsing.parseJsonPerson();
 	}
 	
+	/**
+	* Find one person with first name and last name.
+	* @param First name, last name.
+	* @return Person
+	 * */
 	public Person getOnePerson(final String firstName, final String lastName){
 		log.debug("Searching person : {} {} ..." , firstName, lastName);
 		for(Person personFinder : persons) {
@@ -49,11 +56,20 @@ public class PersonRepository {
 		return null; 
 	}
 	
+	/**
+	* Find all persons from JSON data.
+	* @return List of persons.
+	 * */
 	public List<Person> findAllPersons(){
 		log.debug("List of all person : {} ", persons);
 		return persons;	
 	}
 	
+	/**
+	* Find all persons by last name.
+	* @param last name
+	* @return List of persons.
+	 * */
 	public List<Person> findAllPersonsByLastName(final String lastName){
 		log.debug("Searching for all person by last name : {}", lastName);
 		List<Person> personsListByLastName = new ArrayList<Person>();//Create list of person and put information into Java object.
@@ -66,19 +82,27 @@ public class PersonRepository {
 		return personsListByLastName;
 	}
 	
+	/**
+	* Find all persons who living at one specific address.
+	* @param Address
+	* @return List of persons.
+	 * */
 	public List<Person> getAllPersonsFromSameAddress(final String address){
 		log.debug("Searching all person from same addres : {}", address);
-		List<Person> peronsFromSameAddress = new ArrayList<Person>();//Create list of person and put information into Java object.
+		List<Person> personsFromSameAddress = new ArrayList<Person>();//Create list of person and put information into Java object.
 		for (Person person : persons) {
 			if(person.getAddress().toString().equals(address)) {
-				peronsFromSameAddress.add(person);
+				personsFromSameAddress.add(person);
 			}
 		}
-		log.debug("Liste of person found : {}", peronsFromSameAddress);
-		return peronsFromSameAddress;
+		log.debug("Liste of person found : {}", personsFromSameAddress);
+		return personsFromSameAddress;
 	}
 	
-	
+	/**
+	* Add an person into JSON.
+	* @param person
+	 * */
 	public void addPersonIntoJson(Person person) {
 		log.debug("Requesting to add : {} into  JSON", person);
 		
@@ -97,6 +121,11 @@ public class PersonRepository {
 		log.debug("{} added into  JSON", person);		
 	}
 	
+	/**
+	* Delete an person from JAVA object and from JSON.
+	* @param Person.
+	* @return True if deleted, False if no informations found.
+	 * */
 	public void deletePersonFromJson(Person person) {
 		log.debug("Requesting to delete : {} from JSON", person);
 		
@@ -111,6 +140,11 @@ public class PersonRepository {
 		log.debug("{} deleted from JSON", person);	
 	}
 	
+	/**
+	* Add an person into JAVA object and into JSON.
+	* @param person
+	* @return Person that has been created.
+	 * */
 	public Person addPerson(final Person person) {
 		log.debug("Adding person : {} ...", person);
 		persons.add(person);
@@ -120,6 +154,12 @@ public class PersonRepository {
 		return person;
 	}
 	
+	/**
+	* Update an person into JAVA object and into JSON.
+	* First name and last name didn't change.
+	* @param First name, last name, new person with new informations.
+	* @return Person that has been created.
+	 * */
 	public Person updatePerson(String firstName, String lastName, Person person) {
 		Person personToEdit = getOnePerson(firstName, lastName);//Take Person object that have to be updated.
 		
@@ -159,6 +199,11 @@ public class PersonRepository {
 		return null;
 	}
 	
+	/**
+	* Delete an person from JAVA object and from JSON.
+	* @param First name, last name.
+	* @return True if deleted, False if no informations found.
+	 * */
 	public Boolean deletePerson(final String firstName, final String lastName) {
 		log.debug("Deleting person : {} {}");
 		Person personToDelete = getOnePerson(firstName, lastName);

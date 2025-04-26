@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -17,7 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +23,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.expression.ParseException;
-
 import com.api.safetynet.model.Firestation;
 import com.api.safetynet.model.MedicalRecord;
 import com.api.safetynet.model.Medication;
@@ -39,7 +36,6 @@ import com.api.safetynet.model.DTO.PersonInfoDTO;
 import com.api.safetynet.model.DTO.PersonInfoWithMedicalRecordsDTO;
 import com.api.safetynet.model.DTO.PersonNearFireStationDTO;
 import com.api.safetynet.model.DTO.PersonServedByFireStationDTO;
-import com.api.safetynet.repository.FirestationRepository;
 import com.api.safetynet.repository.PersonRepository;
 import com.api.safetynet.service.FirestationService;
 import com.api.safetynet.service.MedicalRecordService;
